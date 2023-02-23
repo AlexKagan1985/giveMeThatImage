@@ -1,7 +1,8 @@
 import React from "react";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
-import Profile from "./Profile";
+// import Profile from "./Profile";
+import Avatar from "react-avatar";
 
 function Navigationbar() {
   return (
@@ -17,7 +18,11 @@ function Navigationbar() {
             <Nav.Link href="#/action-3">Log out</Nav.Link>
           </Navbar.Offcanvas>
         </Navbar.Collapse>
-        <Profile />
+        <Avatar
+          size="50"
+          facebook-id="invalidfacebookusername"
+          src="http://www.gravatar.com/avatar/a16a38cdfe8b2cbd38e8a56ab93238d3"
+        />
       </Navbar>
     </>
   );
