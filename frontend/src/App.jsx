@@ -2,7 +2,7 @@
 import "./App.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Home from "./components/Home";
-import Search from "./components/Search";
+import SearchPage from "./components/SearchPage";
 import Profile from "./components/Profile";
 
 const router = createBrowserRouter([
@@ -12,7 +12,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/search/:query",
-    element: <Search />,
+    element: <SearchPage />,
   },
   {
     path: "/profile",
