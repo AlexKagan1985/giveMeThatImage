@@ -14,6 +14,8 @@ class SearchError extends Error {
 
 let DAToken = null;
 let DATokenIssuedAt = null;
+let ASpublicCSRF = null;
+let ASprivateCSRF = null;
 
 const cl_id = process.env.DA_CLIENT_ID;
 const cl_secret = process.env.DA_CLIENT_SECRET;
@@ -67,12 +69,84 @@ async function retrieveDAResults(query) {
   return searchResultArray;
 }
 
+async function getASAuth() {
+  if (ASpublicCSRF && ASprivateCSRF) {
+    return [ASpublicCSRF, ASprivateCSRF];
+  }
+
+  // get "auth" (LOL) data from ArtStation
+  const res = await axios.post("https://www.artstation.com/api/v2/csrf_protection/token.json");
+
+  const pubCSRF = res.data.public_csrf_token;
+  console.log("got pubtoken: ", pubCSRF);
+  /** @type {string} */
+  const CsrfCookies = res.headers["set-cookie"];
+  // now actually extract "CSRF" data from the cookie
+  console.log("cookie line:", CsrfCookies);
+  const beforePart = "PRIVATE-CSRF-TOKEN=";
+  const beforeIndex = CsrfCookies[0].indexOf(beforePart) + beforePart.length;
+  const afterIndex = CsrfCookies[0].indexOf(";");
+  const privCSRF = CsrfCookies[0].substring(beforeIndex, afterIndex);
+  console.log("got priv token:", privCSRF);
+
+  if (pubCSRF && privCSRF) {
+    ASpublicCSRF = pubCSRF;
+    ASprivateCSRF = privCSRF;
+    return [pubCSRF, privCSRF];
+  }
+
+  throw new SearchError(ASERROR, "cannot get CSRF from ArtStation API");
+}
+
+async function retrieveASResults(q) {
+  const searchData = {
+    additionalFields: [],
+    filters: [],
+    page: 1,
+    per_page: 30,
+    pro_first: 1,
+    query: q,
+    sorting: "relevance"
+  };
+  const [pubCSRF, privCSRF] = await getASAuth();
+  const result = await axios.post("https://www.artstation.com/api/v2/search/projects.json",
+    searchData,
+    {
+      headers: {
+        "PUBLIC-CSRF-TOKEN": pubCSRF,
+        "Cookie": `PRIVATE-CSRF-TOKEN=${privCSRF}`,
+        "Content-Type": "application/json",
+      }
+    });
+  // now that we have the results, transform them into a common format
+  const resultsArray = result.data.data;
+  if (!resultsArray) {
+    throw new SearchError(ASERROR, "unexpected result from artstation endpoint");
+  }
+
+  const searchResultArray = resultsArray.map((val) => ({
+    img_url: val.url,
+    title: val.title,
+    author_id: val.user.id,
+    author_name: val.user.username,
+    preview_url: val.smaller_square_cover_url,
+    id: val.id,
+    mature_content: val.hide_as_adult,
+    api_data: {
+      ArtStation: val,
+    }
+  }));
+
+  return searchResultArray;
+}
+
 async function getSearchResults(req, res) {
   const { q } = req.query;
 
   try {
-    const daResults = await retrieveDAResults(q);
-    res.send(daResults);
+    // const daResults = await retrieveDAResults(q);
+    const asAuth = await retrieveASResults(q);
+    res.send(asAuth);
   } catch (err) {
     res.status(401).send(err);
     return;
