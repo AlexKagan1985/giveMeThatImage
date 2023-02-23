@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { QueryModel } from '../models/searchQuery.js';
+import { timed } from '../utils/timed.js';
 
 const DAERROR = 1; // error in a deviant art request
 const ASERROR = 2; // error in artstation request
@@ -204,22 +205,34 @@ export async function getSearchResults(req, res) {
 
   try {
     // const daResults = await retrieveDAResults(q);
-    const pbResults = retrievePixabayResults(q);
-    const asResults = retrieveASResults(q);
-    const daResults = retrieveDAResults(q);
-    const usResults = retrieveUnsplashResults(q);
+    const pbResults = timed(retrievePixabayResults(q));
+    const asResults = timed(retrieveASResults(q));
+    const daResults = timed(retrieveDAResults(q));
+    const usResults = timed(retrieveUnsplashResults(q));
 
-    const queryInfoPromise = QueryModel.create({
+    const queryInfoPromise = timed(QueryModel.create({
       // TODO: set user_id to the actual user id.
       // user_id: null,
       query_string: q,
       creation_date: new Date(),
-    });
+    }));
 
     const resPromise = Promise.allSettled([pbResults, asResults, daResults, usResults, queryInfoPromise]);
-    const allResults = await resPromise;
-    const queryInfo = allResults[4].value;
+    const promiseDesc = ["pixabay", "artstation", "deviantart", "unsplash", "mongodb"];
+    console.log("initiate search...");
+    const allResultsTimed = await resPromise;
+    console.log("search finished.");
+    const queryInfo = allResultsTimed[4].value.result;
     const allResultsFinished = [];
+    const allResults = allResultsTimed.map(val => ({
+      reason: val.reason?.error,
+      status: val.status,
+      value: val.value?.result,
+    }));
+    const perfData = allResultsTimed.map((value, index) => ({
+      runtime: value.status === "fulfilled" ? value.value.runtime : value.reason.runtime,
+      type: promiseDesc[index],
+    }));
     for (let i = 0; i < 4; ++i) {
       const res = allResults[i];
       if (res.status === "rejected") {
@@ -231,10 +244,11 @@ export async function getSearchResults(req, res) {
     }
     res.send({
       results: allResultsFinished,
+      performance: perfData,
       ...(queryInfo._doc ?? { db_error: allResults[4].reason })
     });
   } catch (err) {
-    res.status(401).send(err);
+    res.status(401).send(err.message);
     return;
   }
 }
