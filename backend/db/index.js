@@ -1,22 +1,18 @@
-const mongoose = require('mongoose');
+import _mongoose from 'mongoose';
 const connStr = process.env.MONGO_CONNECTION;
 
 console.log('Connecting to MongoDB...', connStr);
 
-mongoose.set('strictQuery', false);
-mongoose.connect(connStr, {
-    dbName: 'givemepic',
+_mongoose.set('strictQuery', false);
+_mongoose.connect(connStr, {
+  dbName: 'givemepic',
 });
 
-const Schema = mongoose.Schema;
+const Schema = _mongoose.Schema;
 const testSchema = new Schema({
-    title: String,
-    description: String
+  title: String,
+  description: String
 });
 
-const TestModel = mongoose.model('Test', testSchema);
-
-module.exports = {
-    mongoose,
-    TestModel
-};
+export const TestModel = _mongoose.model('Test', testSchema);
+export const mongoose = _mongoose;

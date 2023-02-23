@@ -1,4 +1,5 @@
-const axios = require('axios');
+import axios from 'axios';
+import { QueryModel } from '../models/searchQuery.js';
 
 const DAERROR = 1; // error in a deviant art request
 const ASERROR = 2; // error in artstation request
@@ -198,19 +199,43 @@ async function retrievePixabayResults(q) {
   return searchResultArray;
 }
 
-async function getSearchResults(req, res) {
+export async function getSearchResults(req, res) {
   const { q } = req.query;
 
   try {
     // const daResults = await retrieveDAResults(q);
-    const asAuth = await retrievePixabayResults(q);
-    res.send(asAuth);
+    const pbResults = retrievePixabayResults(q);
+    const asResults = retrieveASResults(q);
+    const daResults = retrieveDAResults(q);
+    const usResults = retrieveUnsplashResults(q);
+
+    const queryInfoPromise = QueryModel.create({
+      // TODO: set user_id to the actual user id.
+      // user_id: null,
+      query_string: q,
+      creation_date: new Date(),
+    });
+
+    const resPromise = Promise.allSettled([pbResults, asResults, daResults, usResults, queryInfoPromise]);
+    const allResults = await resPromise;
+    const queryInfo = allResults[4].value;
+    const allResultsFinished = [];
+    for (let i = 0; i < 4; ++i) {
+      const res = allResults[i];
+      if (res.status === "rejected") {
+        // TODO: perhaps signal rejection status to the client
+        console.log("the request ", i, " was rejected. Reason ", res.reason);
+        continue;
+      }
+      allResultsFinished.push(...res.value);
+    }
+    res.send({
+      results: allResultsFinished,
+      ...(queryInfo._doc ?? { db_error: allResults[4].reason })
+    });
   } catch (err) {
     res.status(401).send(err);
     return;
   }
 }
 
-module.exports = {
-  getSearchResults,
-}
