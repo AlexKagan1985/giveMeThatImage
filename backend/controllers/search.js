@@ -19,6 +19,7 @@ let ASprivateCSRF = null;
 
 const cl_id = process.env.DA_CLIENT_ID;
 const cl_secret = process.env.DA_CLIENT_SECRET;
+const us_client_id = process.env.UNSPLASH_CLIENT_ID;
 
 async function getDAAuth() {
   let initToken = false;
@@ -140,12 +141,41 @@ async function retrieveASResults(q) {
   return searchResultArray;
 }
 
+async function retrieveUnsplashResults(q) {
+  const result = await axios.get(`https://api.unsplash.com/search/photos`, {
+    params: {
+      query: q,
+    },
+    headers: {
+      Authorization: `Client-ID ${us_client_id}`
+    }
+  });
+  const resultsArray = result.data.results;
+  if (!resultsArray) {
+    throw new SearchError(USERROR, "unexpected result from unsplash endpoint");
+  }
+  const searchResultArray = resultsArray.map((val) => ({
+    img_url: val.urls.full,
+    title: val.alt_description ?? val.description,
+    author_id: val.user.id,
+    author_name: val.user.username,
+    preview_url: val.urls.thumb,
+    id: val.id,
+    mature_content: false,
+    api_data: {
+      Unsplash: val,
+    }
+  }));
+
+  return searchResultArray;
+}
+
 async function getSearchResults(req, res) {
   const { q } = req.query;
 
   try {
     // const daResults = await retrieveDAResults(q);
-    const asAuth = await retrieveASResults(q);
+    const asAuth = await retrieveUnsplashResults(q);
     res.send(asAuth);
   } catch (err) {
     res.status(401).send(err);
