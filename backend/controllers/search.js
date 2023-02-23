@@ -20,6 +20,7 @@ let ASprivateCSRF = null;
 const cl_id = process.env.DA_CLIENT_ID;
 const cl_secret = process.env.DA_CLIENT_SECRET;
 const us_client_id = process.env.UNSPLASH_CLIENT_ID;
+const pb_key = process.env.PIXABAY_KEY;
 
 async function getDAAuth() {
   let initToken = false;
@@ -170,12 +171,39 @@ async function retrieveUnsplashResults(q) {
   return searchResultArray;
 }
 
+async function retrievePixabayResults(q) {
+  const result = await axios.get(`https://pixabay.com/api/`, {
+    params: {
+      key: pb_key,
+      q: q,
+    },
+  });
+  const resultsArray = result.data.hits;
+  if (!resultsArray) {
+    throw new SearchError(USERROR, "unexpected result from unsplash endpoint");
+  }
+  const searchResultArray = resultsArray.map((val) => ({
+    img_url: val.largeImageURL,
+    title: null,
+    author_id: val.user_id,
+    author_name: val.user,
+    preview_url: val.previewURL,
+    id: val.id,
+    mature_content: false,
+    api_data: {
+      Pixabay: val,
+    }
+  }));
+
+  return searchResultArray;
+}
+
 async function getSearchResults(req, res) {
   const { q } = req.query;
 
   try {
     // const daResults = await retrieveDAResults(q);
-    const asAuth = await retrieveUnsplashResults(q);
+    const asAuth = await retrievePixabayResults(q);
     res.send(asAuth);
   } catch (err) {
     res.status(401).send(err);
