@@ -1,9 +1,9 @@
-// import { useState } from "react";
 import "./App.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Home from "./components/Home";
 import SearchPage from "./components/SearchPage";
 import Profile from "./components/Profile";
+import ImageDetails from "./components/ImageDetails";
 
 const router = createBrowserRouter([
   {
@@ -17,6 +17,10 @@ const router = createBrowserRouter([
   {
     path: "/profile",
     element: <Profile />,
+  },
+  {
+    path: "/image/:id",
+    element: <ImageDetails />,
   },
 ]);
 

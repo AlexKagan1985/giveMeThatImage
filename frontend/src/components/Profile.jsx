@@ -1,38 +1,38 @@
 import React from "react";
-
+import classes from "./Profile.module.css";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 
 function Profile() {
   return (
     <div>
-      <Form>
-        <Form.Group className="mb-3" controlId="formBasicEmail">
-          <Form.Label>Email address</Form.Label>
+      <Form className={classes.form}>
+        <Form.Group className="m-0" controlId="formBasicEmail">
+          <Form.Label></Form.Label>
           <Form.Control type="email" placeholder="Enter email" />
-          <Form.Text className="text-muted">text</Form.Text>
+          <Form.Text className="text-muted"></Form.Text>
         </Form.Group>
 
-        <Form.Group className="mb-3" controlId="formBasicPassword">
-          <Form.Label>Password</Form.Label>
+        <Form.Group className="m-0" controlId="formBasicPassword">
+          <Form.Label></Form.Label>
           <Form.Control type="password" placeholder="Password" />
         </Form.Group>
 
-        <Form.Group className="mb-3" controlId="formBasicPassword">
-          <Form.Label>Confirm Password</Form.Label>
+        <Form.Group className="m-0" controlId="formBasicPassword">
+          <Form.Label></Form.Label>
           <Form.Control
             type="confirm-password"
             placeholder="Confirm Password"
           />
         </Form.Group>
 
-        <Form.Group className="mb-3" controlId="formBasicPassword">
-          <Form.Label>Login/User Name</Form.Label>
+        <Form.Group className="m-0" controlId="formBasicPassword">
+          <Form.Label></Form.Label>
           <Form.Control type="confirm-password" placeholder="Login/User Name" />
         </Form.Group>
 
-        <Form.Group className="position-relative mb-3">
-          <Form.Label>File</Form.Label>
+        <Form.Group className="position-relative m-0">
+          <Form.Label>Upload/change profile picture</Form.Label>
           <Form.Control
             type="file"
             required
@@ -45,17 +45,18 @@ function Profile() {
           </Form.Control.Feedback>
         </Form.Group>
 
-        <Form.Label htmlFor="text">Short description</Form.Label>
-        <Form.Control type="text" id="text" placeholder="Please Enter text" />
-        <Form.Text id="passwordHelpBlock" muted>
-          please provide a short description about yourself
-        </Form.Text>
-
-        <Form.Group className="mb-3" controlId="formBasicCheckbox">
-          <Form.Check type="checkbox" label="Check me out" />
-          <Form.Check type="checkbox" label="Check me out" />
-        </Form.Group>
-
+        <Form.Label htmlFor="text"></Form.Label>
+        <Form.Control
+          as="textarea"
+          placeholder="Please provider a short description"
+        />
+        <Form.Text id="passwordHelpBlock" muted></Form.Text>
+        <div className={classes.checkbox}>
+          <Form.Group className="mb-3" controlId="formBasicCheckbox">
+            <Form.Check type="checkbox" label="Check me out" />
+            <Form.Check type="checkbox" label="Check me out" />
+          </Form.Group>
+        </div>
         <Button variant="primary" type="submit">
           Submit
         </Button>
