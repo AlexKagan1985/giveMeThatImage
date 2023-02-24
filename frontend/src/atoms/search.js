@@ -4,7 +4,7 @@ import axios from "axios";
 
 const backendUrl = "http://localhost:3001";
 
-class PaginatedSearchResult {
+export class PaginatedSearchResult {
   constructor(totalPages, firstPage, pageProvider, providerName) {
     this.totalPages = totalPages;
     this.pageMap = new Map([[1, firstPage]]);
@@ -29,7 +29,7 @@ class PaginatedSearchResult {
       return this.pageAtoms.get(pageNumber);
     }
 
-    const newAtom = atom(this.page.bind(this));
+    const newAtom = loadable(atom(async () => this.page(pageNumber)));
     this.pageAtoms.set(pageNumber, newAtom);
     return newAtom;
   }
