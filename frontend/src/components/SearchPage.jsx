@@ -4,12 +4,7 @@ import CardResult from "./CardResult";
 import classes from "./SearchPage.module.css";
 
 function SearchPage() {
-  const providors = [
-    "first providor",
-    "second providor",
-    "third providor",
-    "fourth providor",
-  ];
+  const providors = ["DeviantArt", "ArtStation", "Unsplash", "fourth providor"];
 
   return (
     <div>
