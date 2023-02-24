@@ -10,7 +10,11 @@ function Home() {
 
       <form action="" method="get" className={classes.form}>
         <input type="text" placeholder="Search" className={classes.searchBar} />
-        <input type="submit" value="Send Request" />
+        <input
+          type="submit"
+          value="Send Request"
+          className={classes.searchButton}
+        />
       </form>
       <Commonkeywords />
     </div>
