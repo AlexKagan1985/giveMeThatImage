@@ -1,14 +1,16 @@
-import { atom, atomFamily } from "jotai";
+import { atom } from "jotai";
+import { atomFamily, loadable } from "jotai/utils";
 import axios from "axios";
 
 const backendUrl = "http://localhost:3001";
 
 class PaginatedSearchResult {
-  constructor(totalPages, firstPage, pageProvider) {
+  constructor(totalPages, firstPage, pageProvider, providerName) {
     this.totalPages = totalPages;
     this.pageMap = new Map([[1, firstPage]]);
     this.pageProvider = pageProvider;
     this.pageAtoms = new Map();
+    this.providerName = providerName;
   }
 
   async page(pageNumber) {
@@ -30,6 +32,10 @@ class PaginatedSearchResult {
     const newAtom = atom(this.page.bind(this));
     this.pageAtoms.set(pageNumber, newAtom);
     return newAtom;
+  }
+
+  get provider() {
+    return this.providerName;
   }
 }
 
@@ -63,12 +69,12 @@ export const searchResultsFamily = atomFamily((query) => {
     const unsplashResult = rawSearchResults.find(val => val.provider === "unsplash");
 
     return [
-      new PaginatedSearchResult(pixabayResult.maxPages, pixabayResult.data, createPageProvider("pixabay", query)),
-      new PaginatedSearchResult(asResult.maxPages, asResult.data, createPageProvider("artstation", query)),
-      new PaginatedSearchResult(daResult.maxPages, daResult.data, createPageProvider("deviantart", query)),
-      new PaginatedSearchResult(unsplashResult.maxPages, unsplashResult.data, createPageProvider("unsplash", query)),
+      new PaginatedSearchResult(pixabayResult.maxPages, pixabayResult.data, createPageProvider("pixabay", query), "pixabay"),
+      new PaginatedSearchResult(asResult.maxPages, asResult.data, createPageProvider("artstation", query), "artstation"),
+      new PaginatedSearchResult(daResult.maxPages, daResult.data, createPageProvider("deviantart", query), "deviantart"),
+      new PaginatedSearchResult(unsplashResult.maxPages, unsplashResult.data, createPageProvider("unsplash", query), "unsplash"),
     ]
   });
-  return resAsync;
+  return loadable(resAsync);
 });
 
