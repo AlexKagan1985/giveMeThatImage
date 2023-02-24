@@ -1,6 +1,7 @@
 /**
  * Creates a new Promise that records how long it ran to completion
  * @async
+ * @template T
  * @param {Promise.<T>} prom - promise to be wrapped
  * @returns {Promise.<{runtime: number, result: T}>} - promise that records performance data
  * @throws {{runtime: number, error: Error}}

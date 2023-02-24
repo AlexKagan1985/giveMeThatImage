@@ -1,18 +1,41 @@
 import axios from 'axios';
 import { QueryModel } from '../models/searchQuery.js';
 import { timed } from '../utils/timed.js';
+import { D } from '../utils/d.js';
 
 const DAERROR = 1; // error in a deviant art request
 const ASERROR = 2; // error in artstation request
 const USERROR = 3; // error in Unsplash request
 const PBERROR = 4; // error in Pixabay request
 
+const PAGE_LIMIT = 20;
+
 class SearchError extends Error {
   constructor(ty, msg) {
-    super(msg);
+    super(`${ty}: ${msg}`);
     this.type = ty;
   }
 }
+
+/**
+* @typedef {object} SearchResult
+* @property {string} img_url
+* @property {string} title
+* @property {string} author_id
+* @property {string} author_name
+* @property {string} preview_url
+* @property {string} id
+* @property {boolean} mature_content
+* @property {object} api_data
+*/
+
+/**
+* @typedef {object} PaginationData
+* @property {number} maxPages
+* @property {number} page
+* @property {SearchResult} data
+* @property {"deviantart"|"unsplash"|"pixabay"|"artstation"} provider
+*/
 
 let DAToken = null;
 let DATokenIssuedAt = null;
@@ -44,12 +67,28 @@ async function getDAAuth() {
   return DAToken;
 }
 
-async function retrieveDAResults(query) {
+/**
+* Gets images from DeviantArt endpoint
+* @async
+* @param {string} query - search query
+* @param {number} pageNumber - #page. Defaults to 1.
+* @returns {Promise.<PaginationData[]>}
+*/
+async function retrieveDAResults(query, pageNumber) {
   // First we need to authenticate ourselves
+  pageNumber ??= 1;
+  const pageLimit = PAGE_LIMIT;
   const authToken = await getDAAuth();
-  console.log("authenticate with ", authToken)
+  console.log("DeviantArt: authenticate with ", authToken)
   const res = await axios.get(`https://www.deviantart.com/api/v1/oauth2/browse/popular?q=${query}`,
-    { headers: { "Authorization": `BEARER ${authToken}` } });
+    {
+      headers: { "Authorization": `BEARER ${authToken}` },
+      params: {
+        q: query,
+        limit: pageLimit,
+        offset: (pageNumber - 1) * pageLimit,
+      }
+    });
 
   // now that we have results from DA, reformat them to be the general searchResult
   const resultsArray = res.data.results;
@@ -65,12 +104,15 @@ async function retrieveDAResults(query) {
     preview_url: val.preview.src,
     id: val.deviationid,
     mature_content: val.is_mature,
-    api_data: {
-      DeviantArt: val,
-    }
+    api_data: val,
   }));
 
-  return searchResultArray;
+  return {
+    maxPages: Math.ceil(res.data.estimated_total / pageLimit),
+    page: pageNumber,
+    data: searchResultArray,
+    provider: "deviantart",
+  };
 }
 
 async function getASAuth() {
@@ -102,12 +144,20 @@ async function getASAuth() {
   throw new SearchError(ASERROR, "cannot get CSRF from ArtStation API");
 }
 
-async function retrieveASResults(q) {
+/**
+* Gets images from artstation endpoint
+* @async
+* @param {string} query - search query
+* @param {number} pageNumber - #page. Defaults to 1.
+* @returns {Promise.<PaginationData[]>}
+*/
+async function retrieveASResults(q, pageNumber) {
+  pageNumber ??= 1;
   const searchData = {
     additionalFields: [],
     filters: [],
-    page: 1,
-    per_page: 30,
+    page: pageNumber,
+    per_page: PAGE_LIMIT,
     pro_first: 1,
     query: q,
     sorting: "relevance"
@@ -136,18 +186,31 @@ async function retrieveASResults(q) {
     preview_url: val.smaller_square_cover_url,
     id: val.id,
     mature_content: val.hide_as_adult,
-    api_data: {
-      ArtStation: val,
-    }
+    api_data: val,
   }));
 
-  return searchResultArray;
+  return {
+    maxPages: Math.ceil(result.data.total_count / PAGE_LIMIT),
+    page: pageNumber,
+    data: searchResultArray,
+    provider: "artstation",
+  };
 }
 
-async function retrieveUnsplashResults(q) {
+/**
+* Gets images from Unsplash endpoint
+* @async
+* @param {string} query - search query
+* @param {number} pageNumber - #page. Defaults to 1.
+* @returns {Promise.<PaginationData[]>}
+*/
+async function retrieveUnsplashResults(q, pageNumber) {
+  pageNumber ??= 1;
   const result = await axios.get(`https://api.unsplash.com/search/photos`, {
     params: {
       query: q,
+      per_page: PAGE_LIMIT,
+      page: pageNumber,
     },
     headers: {
       Authorization: `Client-ID ${us_client_id}`
@@ -165,19 +228,32 @@ async function retrieveUnsplashResults(q) {
     preview_url: val.urls.thumb,
     id: val.id,
     mature_content: false,
-    api_data: {
-      Unsplash: val,
-    }
+    api_data: val
   }));
 
-  return searchResultArray;
+  return {
+    maxPages: result.data.total_pages,
+    page: pageNumber,
+    data: searchResultArray,
+    provider: "unsplash",
+  };
 }
 
-async function retrievePixabayResults(q) {
+/**
+* Gets images from Pixabay endpoint
+* @async
+* @param {string} query - search query
+* @param {number} pageNumber - #page. Defaults to 1.
+* @returns {Promise.<PaginationData[]>}
+*/
+async function retrievePixabayResults(q, pageNumber) {
+  pageNumber ??= 1;
   const result = await axios.get(`https://pixabay.com/api/`, {
     params: {
       key: pb_key,
       q: q,
+      safesearch: true,
+      page: pageNumber,
     },
   });
   const resultsArray = result.data.hits;
@@ -192,24 +268,39 @@ async function retrievePixabayResults(q) {
     preview_url: val.previewURL,
     id: val.id,
     mature_content: false,
-    api_data: {
-      Pixabay: val,
-    }
+    api_data: val,
   }));
 
-  return searchResultArray;
+  return {
+    maxPages: Math.ceil(Math.min(result.data.total, result.data.totalHits) / PAGE_LIMIT),
+    page: pageNumber,
+    data: searchResultArray,
+    provider: "pixabay",
+  };
 }
 
 export async function getSearchResults(req, res) {
-  const { q } = req.query;
+  const { q, type, page } = req.query;
+  const PROVIDERS_ARRAY = ["pixabay", "artstation", "deviantart", "unsplash"];
+  const types = (() => {
+    const temp = type ? type.split(",") : PROVIDERS_ARRAY;
+    return temp.filter(val => PROVIDERS_ARRAY.includes(val));
+  })();
+  const typeFuncsMap = new Map([
+    ["pixabay", retrievePixabayResults],
+    ["artstation", retrieveASResults],
+    ["deviantart", retrieveDAResults],
+    ["unsplash", retrieveUnsplashResults],
+  ])
+  const pageNumber = (() => {
+    const temp = parseInt(page);
+    return isNaN(temp) ? 1 : temp;
+  })();
+
+  console.log("found query with types, ", types, "pageNumber", pageNumber);
 
   try {
-    // const daResults = await retrieveDAResults(q);
-    const pbResults = timed(retrievePixabayResults(q));
-    const asResults = timed(retrieveASResults(q));
-    const daResults = timed(retrieveDAResults(q));
-    const usResults = timed(retrieveUnsplashResults(q));
-
+    const resPromises = types.map((val) => timed(D(typeFuncsMap.get(val))(q, pageNumber)));
     const queryInfoPromise = timed(QueryModel.create({
       // TODO: set user_id to the actual user id.
       // user_id: null,
@@ -217,12 +308,12 @@ export async function getSearchResults(req, res) {
       creation_date: new Date(),
     }));
 
-    const resPromise = Promise.allSettled([pbResults, asResults, daResults, usResults, queryInfoPromise]);
-    const promiseDesc = ["pixabay", "artstation", "deviantart", "unsplash", "mongodb"];
+    const resPromise = Promise.allSettled([...resPromises, queryInfoPromise]);
+    const promiseDesc = [...types, "mongodb"];
     console.log("initiate search...");
     const allResultsTimed = await resPromise;
     console.log("search finished.");
-    const queryInfo = allResultsTimed[4].value.result;
+    const queryInfo = allResultsTimed[allResultsTimed.length - 1].value.result;
     const allResultsFinished = [];
     const allResults = allResultsTimed.map(val => ({
       reason: val.reason?.error,
@@ -233,19 +324,21 @@ export async function getSearchResults(req, res) {
       runtime: value.status === "fulfilled" ? value.value.runtime : value.reason.runtime,
       type: promiseDesc[index],
     }));
-    for (let i = 0; i < 4; ++i) {
-      const res = allResults[i];
+    // remove the last element - results of mongodb query
+    const db_error = allResults.pop().reason;
+    // we are now left with provider responses only
+    for (const res of allResults) {
       if (res.status === "rejected") {
         // TODO: perhaps signal rejection status to the client
         console.log("the request ", i, " was rejected. Reason ", res.reason);
         continue;
       }
-      allResultsFinished.push(...res.value);
+      allResultsFinished.push(res.value);
     }
     res.send({
       results: allResultsFinished,
       performance: perfData,
-      ...(queryInfo._doc ?? { db_error: allResults[4].reason })
+      ...(queryInfo._doc ?? { db_error })
     });
   } catch (err) {
     res.status(401).send(err.message);
