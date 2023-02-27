@@ -1,17 +1,18 @@
-require("dotenv").config();
-const express = require('express');
-const cors = require('cors');
+import "dotenv/config"
+import express, { json } from 'express';
+import cors from 'cors';
 
-const { router: indexRouter } = require('./routes/index');
-const { mongoose } = require('./db');
+import { router as indexRouter } from './routes/index.js';
+import { searchRouter } from './routes/search.js';
 const PORT = process.env.PORT || 3001;
 
 const app = express();
 
-app.use(express.json());
+app.use(json());
 app.use(cors());
 
 app.use('/', indexRouter);
+app.use('/', searchRouter);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

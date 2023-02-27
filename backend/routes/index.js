@@ -1,13 +1,13 @@
-const { createTestObject } = require('../controllers');
+import { createTestObject } from '../controllers/index.js';
+import express from "express";
+export const router = express.Router();
 
-const router = require('express').Router();
-
+export function testMe(a) {
+  return a + a;
+}
 router.get('/', (req, res) => {
-    res.send('Hello World!');
+  res.send('Hello World!');
 })
 
 router.get('/test', createTestObject);
 
-module.exports = {
-    router
-};
