@@ -1,8 +1,8 @@
-const { createTestObject } = require('../controllers');
+import { createTestObject } from '../controllers/index.js';
+import express from "express";
+export const router = express.Router();
 
-const router = require('express').Router();
-
-function testMe(a) {
+export function testMe(a) {
   return a + a;
 }
 router.get('/', (req, res) => {
@@ -11,7 +11,3 @@ router.get('/', (req, res) => {
 
 router.get('/test', createTestObject);
 
-module.exports = {
-  router,
-  testMe,
-};
