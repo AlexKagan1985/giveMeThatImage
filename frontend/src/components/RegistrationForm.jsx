@@ -6,7 +6,9 @@ import { useNavigate } from "react-router-dom";
 import { Formik } from "formik";
 import { object, string } from "yup";
 
-const InnerForm = ({ values, errors, touched, handleChange, handleBlur, handleSubmit }) => {
+const InnerForm = (params) => {
+  console.log("params", params);
+  const { submitCount, values, errors, touched, handleChange, handleBlur, handleSubmit } = params;
   const emailFieldId = useId();
   const loginFieldId = useId();
   const passwordFieldId = useId();
@@ -26,9 +28,10 @@ const InnerForm = ({ values, errors, touched, handleChange, handleBlur, handleSu
           name="login"
           value={values.login}
           onChange={handleChange}
-          className={touched.login ? (errors.login ? "is-invalid" : "is-valid") : ""}
+          isValid={touched.login && !errors.login}
+          isInvalid={touched.login && errors.login}
         />
-        <Form.Control.Feedback type="invalid"> Please enter a login name </Form.Control.Feedback>
+        <Form.Control.Feedback type="invalid"> {errors?.login} </Form.Control.Feedback>
       </FloatingLabel>
       <FloatingLabel controlId={emailFieldId} label="email:" className="mb-3">
         <Form.Control
@@ -38,9 +41,10 @@ const InnerForm = ({ values, errors, touched, handleChange, handleBlur, handleSu
           name="email"
           value={values.email}
           onChange={handleChange}
-          className={touched.email ? (errors.email ? "is-invalid" : "is-valid") : ""}
+          isValid={touched.email && !errors.email}
+          isInvalid={touched.email && errors.email}
         />
-        <Form.Control.Feedback type="invalid"> Please enter a valid email </Form.Control.Feedback>
+        <Form.Control.Feedback type="invalid"> {errors?.email} </Form.Control.Feedback>
       </FloatingLabel>
       <FloatingLabel controlId={passwordFieldId} label="password: " className="mb-3">
         <Form.Control
@@ -49,9 +53,10 @@ const InnerForm = ({ values, errors, touched, handleChange, handleBlur, handleSu
           value={values.password}
           name="password"
           onChange={handleChange}
-          className={touched.password ? (errors.password ? "is-invalid" : "is-valid") : ""}
+          isValid={touched.password && !errors.password}
+          isInvalid={touched.password && errors.password}
         />
-        <Form.Control.Feedback type="invalid"> Invalid </Form.Control.Feedback>
+        <Form.Control.Feedback type="invalid"> {errors?.password} </Form.Control.Feedback>
       </FloatingLabel>
       <FloatingLabel controlId={passwordRepeatFieldId} label="repeat password: " className="mb-3">
         <Form.Control
@@ -60,10 +65,12 @@ const InnerForm = ({ values, errors, touched, handleChange, handleBlur, handleSu
           value={values.repeatPassword}
           name="repeatPassword"
           onChange={handleChange}
-          className={touched.repeatPassword ? (errors.repeatPassword ? "is-invalid" : "is-valid") : ""}
+          isValid={touched.repeatPassword && !errors.repeatPassword}
+          isInvalid={touched.repeatPassword && errors.repeatPassword}
         />
-        <Form.Control.Feedback type="invalid"> Passwords should match </Form.Control.Feedback>
+        <Form.Control.Feedback type="invalid"> {errors?.repeatPassword} </Form.Control.Feedback>
       </FloatingLabel>
+      {submitCount > 1 && Object.values(errors).map(val => (<Alert variant="danger" key={val}>{val}</Alert>))}
       <Form.Group className="d-grid">
         <Button size="lg" type="submit">Register...</Button>
       </Form.Group>
