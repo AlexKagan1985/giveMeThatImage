@@ -1,6 +1,6 @@
 #root {
   min-width: 70vw;
-  clamp(70vw, 100vw, 1280px);
+  clamp(70vw, 100%, 100vw);
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
