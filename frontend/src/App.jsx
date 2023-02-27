@@ -4,6 +4,7 @@ import Home from "./components/Home";
 import SearchPage from "./components/SearchPage";
 import Profile from "./components/Profile";
 import ImageDetails from "./components/ImageDetails";
+import RegistrationPage from "./components/RegistrationPage";
 
 const router = createBrowserRouter([
   {
@@ -22,6 +23,10 @@ const router = createBrowserRouter([
     path: "/image/:id",
     element: <ImageDetails />,
   },
+  {
+    path: "/register/:redirect",
+    element: <RegistrationPage />
+  }
 ]);
 
 function App() {
