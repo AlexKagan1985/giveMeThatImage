@@ -64,5 +64,9 @@ export async function loginUser(req, res) {
     expiresIn: "30d",
   })
 
-  res.send(token);
+  res.send({
+    token,
+    email: myUser.email,
+    description: myUser.description,
+  });
 }

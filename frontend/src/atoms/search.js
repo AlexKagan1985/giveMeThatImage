@@ -1,6 +1,6 @@
 import { atom, getDefaultStore } from "jotai";
 import { atomFamily, loadable } from "jotai/utils";
-import { loggedInUser } from "./auth";
+import { loggedInUserToken } from "./auth";
 import axios from "axios";
 
 const backendUrl = "http://localhost:3001";
@@ -59,7 +59,7 @@ function createPageProvider(provider, query, queryId) {
 export const searchResultsFamily = atomFamily((query) => {
   const defaultStore = getDefaultStore();
   const resAsync = atom(async () => {
-    const userToken = defaultStore.get(loggedInUser);
+    const userToken = defaultStore.get(loggedInUserToken);
     console.log("See user token: ", userToken);
     const resultData = await axios.get(backendUrl + "/search", {
       params: {

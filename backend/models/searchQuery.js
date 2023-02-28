@@ -1,7 +1,10 @@
 import { mongoose } from '../db/index.js';
 
 const querySchema = new mongoose.Schema({
-  user_id: mongoose.Types.ObjectId,
+  user_id: {
+    type: mongoose.Types.ObjectId,
+    ref: 'Users'
+  },
   query_string: String,
   creation_date: Date,
 })
@@ -25,7 +28,10 @@ const paginatedResultSchema = {
 }
 
 const resultPagesSchema = new mongoose.Schema({
-  query_id: mongoose.Types.ObjectId,
+  query_id: {
+    type: mongoose.Types.ObjectId,
+    ref: 'Queries'
+  },
   pages: [paginatedResultSchema],
 })
 

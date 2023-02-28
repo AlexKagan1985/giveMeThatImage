@@ -364,3 +364,35 @@ export async function getSearchResults(req, res) {
   }
 }
 
+/**
+ * Retrieves previous queries of the current user from the database
+ * @param {Request} req 
+ * @param {Response} res 
+ */
+export async function getPreviousQueries(req, res) {
+  const userData = req.user;
+  // find all queries this user initiated
+  const queries = await QueryModel.find({
+    user_id: userData._id
+  });
+
+  res.send(queries);
+}
+
+/**
+ * Retrieves previous search results of our query
+ * @param {Request} req 
+ * @param {Response} res 
+ */
+export async function getQueryResults(req, res) {
+  const userData = req.user;
+
+  const { queryId } = req.query;
+
+  console.log("Finding query details for query id ", queryId);
+  const searchResults = await ResultModel.find({
+    query_id: queryId,
+  });
+
+  res.send(searchResults);
+}
