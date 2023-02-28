@@ -81,13 +81,13 @@ const LoginForm = ({ redirect }) => {
       console.log(err);
       //setErrorMessage(err.response.data);
       setStatus({
-        submitError: err.response.data
+        submitError: err.response?.data ?? err.message
       });
     }
   }
 
   return (
-    <Formik 
+    <Formik
       initialValues={{
         login: "", password: "",
       }}

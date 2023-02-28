@@ -6,6 +6,8 @@ import Profile from "./components/Profile";
 import ImageDetails from "./components/ImageDetails";
 import RegistrationPage from "./components/RegistrationPage";
 import LoginPage from "./components/LoginPage";
+import UserSearchHistory from "./components/UserSearchHistory";
+import { QueryClient, QueryClientProvider } from "react-query";
 
 const router = createBrowserRouter([
   {
@@ -31,15 +33,23 @@ const router = createBrowserRouter([
   {
     path: "/login/:redirect",
     element: <LoginPage />
+  },
+  {
+    path: "/user-history",
+    element: <UserSearchHistory />
   }
 ]);
+
+const queryClient = new QueryClient();
 
 function App() {
   // const [count, setCount] = useState(0);
 
   return (
     <div className="App">
-      <RouterProvider router={router} />
+      <QueryClientProvider client={queryClient} >
+        <RouterProvider router={router} />
+      </QueryClientProvider>
     </div>
   );
 }
