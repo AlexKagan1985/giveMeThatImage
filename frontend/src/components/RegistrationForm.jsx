@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars, no-unreachable */
 import axios from "axios";
-import { useId, useState } from "react"
+import { useId } from "react"
 import { Alert, Button, FloatingLabel, Form } from "react-bootstrap"
 import { useNavigate } from "react-router-dom";
 import { Formik } from "formik";
@@ -8,7 +8,7 @@ import { object, string } from "yup";
 
 const InnerForm = (params) => {
   console.log("params", params);
-  const { submitCount, values, errors, touched, handleChange, handleBlur, handleSubmit } = params;
+  const { submitCount, values, errors, touched, handleChange, handleBlur, handleSubmit, status, isSubmitting } = params;
   const emailFieldId = useId();
   const loginFieldId = useId();
   const passwordFieldId = useId();
@@ -16,6 +16,7 @@ const InnerForm = (params) => {
 
   console.log("errors", errors);
   console.log("touched,", touched);
+  console.log("submitting", isSubmitting);
 
   return (
 
@@ -24,7 +25,6 @@ const InnerForm = (params) => {
         <Form.Control
           onBlur={handleBlur}
           type="input"
-          placeholder="Name"
           name="login"
           value={values.login}
           onChange={handleChange}
@@ -37,7 +37,6 @@ const InnerForm = (params) => {
         <Form.Control
           onBlur={handleBlur}
           type="input"
-          placeholder="name@example.com"
           name="email"
           value={values.email}
           onChange={handleChange}
@@ -70,16 +69,16 @@ const InnerForm = (params) => {
         />
         <Form.Control.Feedback type="invalid"> {errors?.repeatPassword} </Form.Control.Feedback>
       </FloatingLabel>
+      {status.submitError && <Alert variant="danger">{status.submitError}</Alert>}
       {submitCount > 1 && Object.values(errors).map(val => (<Alert variant="danger" key={val}>{val}</Alert>))}
       <Form.Group className="d-grid">
-        <Button size="lg" type="submit">Register...</Button>
+        <Button size="lg" type="submit" disabled={isSubmitting}>Register...</Button>
       </Form.Group>
     </Form>
   )
 }
 
 const RegistrationForm = ({ redirect }) => {
-  const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
 
   const schema = object().shape({
@@ -89,7 +88,8 @@ const RegistrationForm = ({ redirect }) => {
     repeatPassword: string().required(),
   })
 
-  const handleSubmit = async ({ login, email, password, repeatPassword }) => {
+  const handleSubmit = async (formValues, { setStatus }) => {
+    const { login, email, password, repeatPassword } = formValues;
     console.log("handle submit, ", login, password, email, repeatPassword);
 
     //TODO: actually do the registration here
@@ -102,15 +102,21 @@ const RegistrationForm = ({ redirect }) => {
       navigate(redirect);
     } catch (err) {
       console.log(err);
-      setErrorMessage(err.response.data);
+      //setErrorMessage(err.response.data);
+      setStatus({
+        submitError: err.response.data
+      });
     }
   }
 
   return (
-    <Formik initialValues={{
-      email: "", login: "", password: "", repeatPassword: "",
-    }}
+    <Formik 
+      initialValues={{
+        email: "", login: "", password: "", repeatPassword: "",
+      }}
+      
       onSubmit={handleSubmit}
+      initialStatus={{test: "hello"}}
       validationSchema={schema}
       validate={(values) => {
         if (values.repeatPassword === values.password) {

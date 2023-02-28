@@ -22,6 +22,13 @@ export async function registerUser(req, res, next) {
     });
     res.send(user);
   } catch (err) {
+    if (err.code === 11000) {
+      // value with given login already exists
+      next({
+        message: `User ${req.body.login} already exists.`
+      });
+      return;
+    }
     next(err);
   }
 }
