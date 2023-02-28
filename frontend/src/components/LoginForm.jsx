@@ -5,6 +5,8 @@ import { Alert, Button, FloatingLabel, Form } from "react-bootstrap"
 import { useNavigate } from "react-router-dom";
 import { Formik } from "formik";
 import { object, string } from "yup";
+import { useAtom } from "jotai";
+import { loggedInUser } from "../atoms/auth";
 
 const InnerForm = (params) => {
   console.log("params", params);
@@ -54,6 +56,7 @@ const InnerForm = (params) => {
 
 const LoginForm = ({ redirect }) => {
   const navigate = useNavigate();
+  const [_user, setUser] = useAtom(loggedInUser);
 
   const schema = object().shape({
     login: string().required(),
@@ -71,6 +74,7 @@ const LoginForm = ({ redirect }) => {
         password
       });
       console.log("retrieved data from the auth server: ", result.data);
+      setUser(result.data);
       setStatus({});
       navigate(redirect);
     } catch (err) {
