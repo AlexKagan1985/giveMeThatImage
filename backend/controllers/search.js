@@ -371,10 +371,38 @@ export async function getSearchResults(req, res) {
  */
 export async function getPreviousQueries(req, res) {
   const userData = req.user;
+  const queryAggregationPipeline = [
+    {
+      '$match': {
+        'user_id': userData._id,
+      }
+    }, {
+      '$lookup': {
+        'from': 'searchresults',
+        'localField': '_id',
+        'foreignField': 'query_id',
+        'as': 'result_preview'
+      }
+    }, {
+      '$unwind': {
+        'path': '$result_preview'
+      }
+    }, {
+      '$set': {
+        'result_preview.my_pages': {
+          '$slice': [
+            '$result_preview.pages', 4
+          ]
+        }
+      }
+    }, {
+      '$project': {
+        'result_preview.pages': 0
+      }
+    }
+  ]
   // find all queries this user initiated
-  const queries = await QueryModel.find({
-    user_id: userData._id
-  });
+  const queries = await QueryModel.aggregate(queryAggregationPipeline);
 
   res.send(queries);
 }
