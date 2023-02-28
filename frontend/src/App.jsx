@@ -5,6 +5,7 @@ import SearchPage from "./components/SearchPage";
 import Profile from "./components/Profile";
 import ImageDetails from "./components/ImageDetails";
 import RegistrationPage from "./components/RegistrationPage";
+import LoginPage from "./components/LoginPage";
 
 const router = createBrowserRouter([
   {
@@ -26,6 +27,10 @@ const router = createBrowserRouter([
   {
     path: "/register/:redirect",
     element: <RegistrationPage />
+  },
+  {
+    path: "/login/:redirect",
+    element: <LoginPage />
   }
 ]);
 

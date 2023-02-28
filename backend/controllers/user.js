@@ -40,10 +40,12 @@ export async function registerUser(req, res, next) {
  */
 export async function loginUser(req, res) {
   const { password, login } = req.body;
+  console.log(password, login);
 
   const user = await UserModel.find({ login });
   if (user.length === 0) {
     // no user with specified login was found
+    console.log("user not found");
     res.status(400).send("Login failure.")
     return;
   }
@@ -51,6 +53,7 @@ export async function loginUser(req, res) {
 
   const compRes = await bcrypt.compare(password, D(myUser.pass));
   if (!compRes) {
+    console.log("password compare failed");
     res.status(400).send("Login failure.");
     return;
   }
