@@ -316,12 +316,12 @@ export async function getSearchResults(req, res) {
     }));
 
     const resPromise = queryInfoPromise ? Promise.allSettled([...resPromises, queryInfoPromise]) :
-        Promise.allSettled(resPromises);
+      Promise.allSettled(resPromises);
     const promiseDesc = queryInfoPromise ? [...types, "mongodb"] : types;
     console.log("initiate search...");
     const allResultsTimed = await resPromise;
     console.log("search finished.");
-    const queryInfo = queryInfoPromise ? allResultsTimed[allResultsTimed.length - 1].value.result: null;
+    const queryInfo = queryInfoPromise ? allResultsTimed[allResultsTimed.length - 1].value.result : null;
     const allResultsFinished = [];
     const allResults = allResultsTimed.map(val => ({
       reason: val.reason?.error,
@@ -388,6 +388,16 @@ export async function getQueryResults(req, res) {
   const userData = req.user;
 
   const { queryId } = req.query;
+  const authStatusRequest = await QueryModel.find({
+    _id: queryId
+  });
+
+  if (authStatusRequest.length === 0 || !authStatusRequest[0].user_id.equals(userData._id)) {
+    console.log("found query", authStatusRequest);
+    // you cannot access this query result;
+    res.status(403).send("Forbidden");
+    return;
+  }
 
   console.log("Finding query details for query id ", queryId);
   const searchResults = await ResultModel.find({
