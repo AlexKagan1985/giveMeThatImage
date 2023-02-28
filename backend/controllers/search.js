@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { QueryModel } from '../models/searchQuery.js';
+import { QueryModel, ResultModel } from '../models/searchQuery.js';
 import { timed } from '../utils/timed.js';
 import { D } from '../utils/d.js';
 
@@ -280,7 +280,9 @@ async function retrievePixabayResults(q, pageNumber) {
 }
 
 export async function getSearchResults(req, res) {
-  const { q, type, page } = req.query;
+  const { q, type, page, queryId } = req.query;
+  const userData = req.user;
+  console.log("current user data: ", userData);
   const PROVIDERS_ARRAY = ["pixabay", "artstation", "deviantart", "unsplash"];
   const types = (() => {
     const temp = type ? type.split(",") : PROVIDERS_ARRAY;
@@ -301,19 +303,25 @@ export async function getSearchResults(req, res) {
 
   try {
     const resPromises = types.map((val) => timed(D(typeFuncsMap.get(val))(q, pageNumber)));
-    const queryInfoPromise = timed(QueryModel.create({
-      // TODO: set user_id to the actual user id.
-      // user_id: null,
+    const resultModelPromise = queryId && ResultModel.findOne({
+      query_id: queryId
+    });
+    const resultCollection = resultModelPromise && await resultModelPromise;
+
+    // If we have real query id, we dont need to create a new one
+    const queryInfoPromise = resultCollection ? null : timed(QueryModel.create({
+      user_id: userData?._id,
       query_string: q,
       creation_date: new Date(),
     }));
 
-    const resPromise = Promise.allSettled([...resPromises, queryInfoPromise]);
-    const promiseDesc = [...types, "mongodb"];
+    const resPromise = queryInfoPromise ? Promise.allSettled([...resPromises, queryInfoPromise]) :
+        Promise.allSettled(resPromises);
+    const promiseDesc = queryInfoPromise ? [...types, "mongodb"] : types;
     console.log("initiate search...");
     const allResultsTimed = await resPromise;
     console.log("search finished.");
-    const queryInfo = allResultsTimed[allResultsTimed.length - 1].value.result;
+    const queryInfo = queryInfoPromise ? allResultsTimed[allResultsTimed.length - 1].value.result: null;
     const allResultsFinished = [];
     const allResults = allResultsTimed.map(val => ({
       reason: val.reason?.error,
@@ -325,7 +333,7 @@ export async function getSearchResults(req, res) {
       type: promiseDesc[index],
     }));
     // remove the last element - results of mongodb query
-    const db_error = allResults.pop().reason;
+    const db_error = queryInfoPromise && allResults.pop().reason;
     // we are now left with provider responses only
     for (const res of allResults) {
       if (res.status === "rejected") {
@@ -335,10 +343,20 @@ export async function getSearchResults(req, res) {
       }
       allResultsFinished.push(res.value);
     }
+    if (resultCollection) {
+      resultCollection.pages.push(...allResultsFinished);
+      await resultCollection.save();
+    } else {
+      // we have a new query with new ID
+      await ResultModel.create({
+        query_id: queryInfo._id,
+        pages: allResultsFinished,
+      });
+    }
     res.send({
       results: allResultsFinished,
       performance: perfData,
-      ...(queryInfo._doc ?? { db_error })
+      ...(queryInfo?._doc ?? { db_error })
     });
   } catch (err) {
     res.status(401).send(err.message);

@@ -1,5 +1,6 @@
-import { atom } from "jotai";
+import { atom, getDefaultStore } from "jotai";
 import { atomFamily, loadable } from "jotai/utils";
+import { loggedInUser } from "./auth";
 import axios from "axios";
 
 const backendUrl = "http://localhost:3001";
@@ -39,13 +40,14 @@ export class PaginatedSearchResult {
   }
 }
 
-function createPageProvider(provider, query) {
+function createPageProvider(provider, query, queryId) {
   return async (pageNumber) => {
     const resultData = await axios.get(backendUrl + "/search", {
       params: {
         q: query,
         page: pageNumber,
         type: provider,
+        queryId
       }
     });
 
@@ -55,24 +57,31 @@ function createPageProvider(provider, query) {
 }
 
 export const searchResultsFamily = atomFamily((query) => {
+  const defaultStore = getDefaultStore();
   const resAsync = atom(async () => {
+    const userToken = defaultStore.get(loggedInUser);
+    console.log("See user token: ", userToken);
     const resultData = await axios.get(backendUrl + "/search", {
       params: {
         q: query,
+      },
+      headers: {
+        Authorization: `BEARER ${userToken}`,
       }
     });
     /** @type {{maxPages: number, page: number, provider: string, data: object[]}[]} */
     const rawSearchResults = resultData.data.results;
+    const queryId = resultData.data._id;
     const pixabayResult = rawSearchResults.find(val => val.provider === "pixabay");
     const asResult = rawSearchResults.find(val => val.provider === "artstation");
     const daResult = rawSearchResults.find(val => val.provider === "deviantart");
     const unsplashResult = rawSearchResults.find(val => val.provider === "unsplash");
 
     return [
-      new PaginatedSearchResult(pixabayResult.maxPages, pixabayResult.data, createPageProvider("pixabay", query), "pixabay"),
-      new PaginatedSearchResult(asResult.maxPages, asResult.data, createPageProvider("artstation", query), "artstation"),
-      new PaginatedSearchResult(daResult.maxPages, daResult.data, createPageProvider("deviantart", query), "deviantart"),
-      new PaginatedSearchResult(unsplashResult.maxPages, unsplashResult.data, createPageProvider("unsplash", query), "unsplash"),
+      new PaginatedSearchResult(pixabayResult.maxPages, pixabayResult.data, createPageProvider("pixabay", query, queryId), "pixabay"),
+      new PaginatedSearchResult(asResult.maxPages, asResult.data, createPageProvider("artstation", query, queryId), "artstation"),
+      new PaginatedSearchResult(daResult.maxPages, daResult.data, createPageProvider("deviantart", query, queryId), "deviantart"),
+      new PaginatedSearchResult(unsplashResult.maxPages, unsplashResult.data, createPageProvider("unsplash", query, queryId), "unsplash"),
     ]
   });
   return loadable(resAsync);
