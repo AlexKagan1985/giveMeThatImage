@@ -1,7 +1,12 @@
 @use "../scss/commons.scss";
+@import "../bootstrap.scss";
 
 .form{
   background-color:ghostwhite;
+  @extend .mb-3;
+}
+
+.content {
   @include commons.content-centered;
 }
 
