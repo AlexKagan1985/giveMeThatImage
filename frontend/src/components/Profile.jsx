@@ -4,11 +4,12 @@ import classes from "./Profile.module.scss";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import { useAtomValue } from "jotai";
-import { loggedInUser } from "../atoms/auth";
+import { loggedInUser, loggedInUserToken } from "../atoms/auth";
 import { useLocation, useNavigate } from "react-router-dom";
-import { FloatingLabel } from "react-bootstrap";
+import { Alert, FloatingLabel } from "react-bootstrap";
 import { Formik } from "formik";
 import { object, string } from "yup";
+import axios from "axios";
 
 function ChangePasswordForm({ submitCount, values, errors, touched, handleChange, handleBlur, handleSubmit, status, isSubmitting }) {
   const passId = useId();
@@ -56,6 +57,8 @@ function ChangePasswordForm({ submitCount, values, errors, touched, handleChange
         <Form.Control.Feedback type="invalid" >{errors.repeatPassword}</Form.Control.Feedback>
       </FloatingLabel>
 
+      {status && <Alert variant="info">{status.message}</Alert>}
+
       <Button variant="primary" type="submit">
         Submit
       </Button>
@@ -102,7 +105,6 @@ function InnerForm({ submitCount, values, errors, touched, handleChange, handleB
         <Form.Label>Upload/change profile picture</Form.Label>
         <Form.Control
           type="file"
-          required
           name="file"
         // onChange={handleChange}
         // isInvalid={!!errors.file}
@@ -136,6 +138,7 @@ function InnerForm({ submitCount, values, errors, touched, handleChange, handleB
 function Profile() {
   // only allow this when the user has authenticated
   const user = useAtomValue(loggedInUser);
+  const userToken = useAtomValue(loggedInUserToken);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -153,12 +156,50 @@ function Profile() {
 
   console.log("user ", user);
 
-  const handleSubmit = (formValues) => {
+  const handleSubmit = async (formValues, {setStatus}) => {
     console.log("submitting with values ... ", formValues);
+
+    try {
+      const result = await axios.put("http://localhost:3001/user/info", {
+        description: formValues.description,
+        email: formValues.email
+      }, {
+        headers: {
+          Authorization: `BEARER ${userToken}`
+        }
+      });
+
+      console.log("success!", result.data);
+      setStatus({message: "Success!"});
+    } catch(err) {
+      console.log("Error!", err);
+      setStatus({message: "Error?!"});
+    }
   }
 
-  const handleChangePassword = (formValues) => {
+  const handleChangePassword = async (formValues, state) => {
     console.log("changing password: ", formValues);
+    console.log("functions: ", state);
+
+    try {
+      const result = await axios.post("http://localhost:3001/user/changePassword", {
+        currentPassword: formValues.currentPassword,
+        newPassword: formValues.newPassword,
+      }, {
+        headers: {
+          Authorization: `BEARER ${userToken}`,
+        }
+      });
+      console.log("success! ", result.data);
+      state.setStatus({message: "Success!"})
+    } catch(err) {
+      if (err.code === "ERR_BAD_REQUEST") {
+        state.setErrors({
+          currentPassword: err.response.data,
+        })
+      }
+      console.log("error! ", err);
+    }
   }
 
   return (

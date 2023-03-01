@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { Formik } from "formik";
 import { object, string } from "yup";
 import { useAtom } from "jotai";
-import { loggedInUser } from "../atoms/auth";
+import { loggedInUser, saveUser } from "../atoms/auth";
 
 const InnerForm = (params) => {
   console.log("params", params);
@@ -75,6 +75,7 @@ const LoginForm = ({ redirect }) => {
       });
       console.log("retrieved data from the auth server: ", result.data);
       setUser(result.data);
+      await saveUser();
       setStatus({});
       navigate(redirect);
     } catch (err) {

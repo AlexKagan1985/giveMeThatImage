@@ -5,6 +5,15 @@ import { D } from "../utils/d.js";
 
 const JWT_SECRET = process.env.JWT_SECRET;
 console.log("secret: ", JWT_SECRET);
+
+function createUserInfo(user) {
+  return {
+    login: user.login,
+    email: user.email,
+    description: user.description,
+  }
+}
+
 /**
  * registers a new user in the database
  * @param {Request} req
@@ -65,9 +74,62 @@ export async function loginUser(req, res) {
   })
 
   res.send({
+    ...createUserInfo(myUser),
     token,
-    email: myUser.email,
-    description: myUser.description,
-    login,
   });
+}
+
+/**
+ * Changes user's password
+ * @param {Request} req 
+ * @param {Response} res 
+ */
+export async function changePassword(req, res, next) {
+  const { currentPassword, newPassword } = req.body;
+  const user = req.user;
+
+  try {
+    const result = await bcrypt.compare(currentPassword, user.pass);
+    if (!result) {
+      console.log("password compare failed");
+      res.status(400).send("password check failure.");
+      return;
+    }
+
+    const hashedPass = await bcrypt.hash(newPassword, 10);
+    user.pass = hashedPass;
+    await user.save();
+
+    res.send({ status: "success" });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function getUserInfo(req, res, next) {
+  const user = req.user;
+
+  res.send(createUserInfo(user));
+}
+
+export async function setUserInfo(req, res, next) {
+  const user = req.user;
+
+  const {description, email} = req.body;
+
+  if (description) {
+    user.description = description;
+  }
+  if (email) {
+    user.email = email;
+  }
+
+  try {
+    await user.save();
+  } catch (err) {
+    next(err);
+    return;
+  }
+
+  res.send(createUserInfo(user));
 }
