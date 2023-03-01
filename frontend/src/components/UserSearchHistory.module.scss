@@ -1,0 +1,49 @@
+@use "../scss/commons.scss";
+@import "../bootstrap.scss";
+
+.container {
+    @include commons.content-centered;
+}
+
+.history_list {
+    list-style: none;
+    padding: 0;
+}
+
+.history_item {
+    @extend .rounded;
+    box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.5);
+    padding: 0.5rem;
+    display: flex;
+    gap: 1rem;
+
+    .item_query {
+        font-weight: bold;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+
+        .creation_date {
+            font-weight: lighter;
+            font-size: $small-font-size;
+            color: $gray-800;
+        }
+    }
+
+    .item_stats {
+        font-size: $font-size-base * 0.75;
+    }
+
+    .item_preview {
+        flex-grow: 9999;
+        display: flex;
+        gap: 1rem;
+        img {
+            display: block;
+            width: 150px;
+            height: 200px;
+            object-fit: cover;
+        }
+    }
+}
+
