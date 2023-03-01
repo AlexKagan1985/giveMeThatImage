@@ -87,6 +87,7 @@ async function retrieveDAResults(query, pageNumber) {
         q: query,
         limit: pageLimit,
         offset: (pageNumber - 1) * pageLimit,
+        mature_content: true,
       }
     });
 
