@@ -1,0 +1,11 @@
+@use "../scss/commons.scss";
+
+.form{
+  background-color:ghostwhite;
+  @include commons.content-centered;
+}
+
+.checkbox{
+  background-color: lightgray
+}
+ 

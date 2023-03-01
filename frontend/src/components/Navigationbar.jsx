@@ -7,10 +7,9 @@ import classes from "./Navigationbar.module.css";
 function Navigationbar() {
   return (
     <>
-      <Navbar className="fixed-top" bg="light" expand={false}>
+      <Navbar className="fixed-top" bg="light">
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
-          <Navbar.Offcanvas>
             <Nav.Link href="#/action-1" className={classes.link}>
               History
             </Nav.Link>
@@ -26,7 +25,6 @@ function Navigationbar() {
             <Nav.Link href="#/action-5" className={classes.link}>
               Log out
             </Nav.Link>
-          </Navbar.Offcanvas>
         </Navbar.Collapse>
         <Avatar
           size="50"

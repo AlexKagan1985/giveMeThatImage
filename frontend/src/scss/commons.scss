@@ -1,0 +1,8 @@
+$content-width: 60rem;
+
+$form-width: $content-width;
+
+@mixin content-centered {
+    max-width: $content-width;
+    margin-inline: auto;
+}

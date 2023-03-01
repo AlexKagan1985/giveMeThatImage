@@ -1,13 +1,23 @@
 .img{
-    width: 100%;
-    height: 80%;
     object-fit: cover;
     border-radius: 5px;
+    height: 22rem;
 }
 
-.body{
+.card_body{
     border-radius: 15px;
     margin: 0.5vw;  
 }
 
+.card {
+    width: 20rem;
+    text-align: center;
+}
 
+.cards{
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-around;
+    gap: 1.5rem;
+    margin: 1rem;
+}

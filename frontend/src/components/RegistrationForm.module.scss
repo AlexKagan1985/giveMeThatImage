@@ -1,0 +1,5 @@
+@use "../scss/commons.scss";
+
+.registration_form {
+    @include commons.content-centered;
+}

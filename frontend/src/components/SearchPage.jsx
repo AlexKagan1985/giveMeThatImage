@@ -11,7 +11,7 @@ function SearchPage() {
   const [currentProviderIdx, setCurrentProviderIdx] = useState(0); //index in the providers array, from 0 to 3
   const searchResultsAtom = searchResultsFamily(query);
   const searchResults = useAtomValue(searchResultsAtom);
-  const providors = ["Pixabay", "ArtStation", "DeviantArt", "Unsplash"];
+  const providers = ["Pixabay", "ArtStation", "DeviantArt", "Unsplash"];
 
   console.log("search result atom content: ", searchResults);
 
@@ -19,21 +19,19 @@ function SearchPage() {
     <div>
       <p>We have query: {query}</p>
       <div className={classes.settings}>Settings</div>
-      <div className={classes.providors}>
-        {providors.map((providor, idx) => (
+      <div className={classes.providers}>
+        {providers.map((provider, idx) => (
           <Button
             variant="outline-dark"
-            key={providor}
+            key={provider}
             className={classes.button}
             onClick={() => setCurrentProviderIdx(idx)}
           >
-            {providor}
+            {provider}
           </Button>
         ))}
       </div>
-      <div className={classes.card}>
-        {searchResults.state === "hasData" ? <CardResult currentData={searchResults.data[currentProviderIdx]} /> : "Loading..."}
-      </div>
+      {searchResults.state === "hasData" ? <CardResult currentData={searchResults.data[currentProviderIdx]} /> : "Loading..."}
     </div>
   );
 }
