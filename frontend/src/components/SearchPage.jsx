@@ -1,5 +1,5 @@
 import { useAtomValue } from "jotai";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Button from "react-bootstrap/Button";
 import { useParams } from "react-router";
 import { searchResultsFamily } from "../atoms/search";
@@ -14,6 +14,15 @@ function SearchPage() {
   const providers = ["Pixabay", "ArtStation", "DeviantArt", "Unsplash"];
 
   console.log("search result atom content: ", searchResults);
+
+  useEffect(() => {
+    return () => {
+      if (searchResults.state === "hasError") {
+        console.log("error detected. Attempting cleanup...");
+        searchResultsFamily.remove(query);
+      }
+    }
+  })
 
   return (
     <div>

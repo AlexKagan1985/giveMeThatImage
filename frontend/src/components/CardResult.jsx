@@ -9,16 +9,14 @@ import { PaginatedSearchResult } from "../atoms/search";
 import classes from "./CardResult.module.css";
 
 const Paginated = ({ totalPages, setCurrentPage, currentPage }) => {
-  const results = [];
+  let result = null;
 
   if (totalPages < 7) {
-    for (let i = 1; i < totalPages; i++) {
-      results.push(
-        <Pagination.Item onClick={() => setCurrentPage(i)}> i </Pagination.Item>
-      );
-    }
+    result = Array.from({length: totalPages}).map((_val, i) => (
+      <Pagination.Item onClick={() => setCurrentPage(i)} key={i}> i </Pagination.Item>
+    ));
   } else {
-    results.push(
+    result = (
       <>
         <Pagination.First onClick={() => setCurrentPage(1)} disabled={currentPage === 1} />
         <Pagination.Prev onClick={() => setCurrentPage(currentPage-1)} disabled={currentPage === 1}/>
@@ -40,9 +38,9 @@ const Paginated = ({ totalPages, setCurrentPage, currentPage }) => {
         <Pagination.Next onClick={() => setCurrentPage(currentPage+1)} disabled={currentPage === totalPages}/>
         <Pagination.Last onClick={() => setCurrentPage(totalPages)} disabled={currentPage === totalPages}/>
       </>
-    );
+    )
   }
-  return results;
+  return result;
 };
 
 /**

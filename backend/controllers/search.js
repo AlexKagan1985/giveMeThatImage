@@ -80,7 +80,7 @@ async function retrieveDAResults(query, pageNumber) {
   const pageLimit = PAGE_LIMIT;
   const authToken = await getDAAuth();
   console.log("DeviantArt: authenticate with ", authToken)
-  const res = await axios.get(`https://www.deviantart.com/api/v1/oauth2/browse/popular?q=${query}`,
+  const res = await axios.get(`https://www.deviantart.com/api/v1/oauth2/browse/newest?q=${query}`,
     {
       headers: { "Authorization": `BEARER ${authToken}` },
       params: {
@@ -96,7 +96,11 @@ async function retrieveDAResults(query, pageNumber) {
     throw new SearchError(DAERROR, "unexpected result from deviant art endpoint");
   }
 
-  const searchResultArray = resultsArray.map((val) => ({
+  // filter out literary content 
+
+  const resultsFilteredArray = resultsArray.filter(val => val.category !== "Literature") ;
+
+  const searchResultArray = resultsFilteredArray.map((val) => ({
     img_url: val.url,
     title: val.title,
     author_id: val.author.userid,
@@ -338,7 +342,7 @@ export async function getSearchResults(req, res) {
     for (const res of allResults) {
       if (res.status === "rejected") {
         // TODO: perhaps signal rejection status to the client
-        console.log("the request ", i, " was rejected. Reason ", res.reason);
+        console.log("the request was rejected. Reason ", res.reason);
         continue;
       }
       allResultsFinished.push(res.value);

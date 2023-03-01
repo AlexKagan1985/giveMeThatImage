@@ -3,6 +3,7 @@ import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import Avatar from "react-avatar";
 import classes from "./Navigationbar.module.css";
+import { NavLink } from "react-router-dom";
 
 function Navigationbar() {
   return (
@@ -10,21 +11,24 @@ function Navigationbar() {
       <Navbar className="fixed-top" bg="light">
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
-            <Nav.Link href="#/action-1" className={classes.link}>
+          <NavLink to="/" >
+            <Nav.Link className={classes.link} as="span">
+              Home
+            </Nav.Link>
+          </NavLink>
+          <NavLink to="/user-history" >
+            <Nav.Link className={classes.link} as="span">
               History
             </Nav.Link>
-            <Nav.Link href="#/action-2" className={classes.link}>
-              Favorites
-            </Nav.Link>
-            <Nav.Link href="#/action-3" className={classes.link}>
+          </NavLink>
+          <Nav.Link className={classes.link} as="span">
+            Favorites
+          </Nav.Link>
+          <NavLink to="/profile" >
+            <Nav.Link className={classes.link} as="span">
               Profile
             </Nav.Link>
-            <Nav.Link href="#/action-4" className={classes.link}>
-              Statistics
-            </Nav.Link>
-            <Nav.Link href="#/action-5" className={classes.link}>
-              Log out
-            </Nav.Link>
+          </NavLink>
         </Navbar.Collapse>
         <Avatar
           size="50"

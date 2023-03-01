@@ -21,12 +21,14 @@ const HistoryItem = ({ item }) => {
     <div>Pixabay: {item.result_preview.my_pages.find(p => p.provider === "artstation").maxPages} pages</div>
   </div>
 
-  const largestResult = useMemo(() => item.result_preview.my_pages.reduce((prevVal, currentVal) => {
+  /* const largestResult = useMemo(() => item.result_preview.my_pages.reduce((prevVal, currentVal) => {
     if (prevVal.maxPages > currentVal.maxPages) {
       return prevVal;
     }
     return currentVal;
-  }), [item]);
+  }), [item]); */
+
+  const largestResult = item.result_preview.my_pages[0];
 
   const PicsPreviewElement = <div className={classes.item_preview}>
     <img src={largestResult.data[0].preview_url} />
