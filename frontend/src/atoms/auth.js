@@ -44,3 +44,9 @@ export async function saveUser() {
     localStorage.setItem("user-token", userToken);
   }
 }
+
+export async function logOut() {
+  const store = getDefaultStore();
+  store.set(loggedInUser, null);
+  localStorage.removeItem("user-token");
+}
