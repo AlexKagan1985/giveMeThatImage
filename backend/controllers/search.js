@@ -376,11 +376,23 @@ export async function getSearchResults(req, res) {
  */
 export async function getPreviousQueries(req, res) {
   const userData = req.user;
+  const { after } = req.query;
   const queryAggregationPipeline = [
     {
       '$match': {
         'user_id': userData._id,
+        ... (after ? {
+          'creation_date': {
+            '$lt': after,
+          }
+        } : {}),
       }
+    }, {
+      '$sort': {
+        'creation_date': -1,
+      }
+    }, {
+      '$limit': 15,
     }, {
       '$lookup': {
         'from': 'searchresults',
@@ -402,7 +414,9 @@ export async function getPreviousQueries(req, res) {
       }
     }, {
       '$project': {
-        'result_preview.pages': 0
+        'result_preview.pages': '$result_preview.my_pages',
+        'query_string': 1,
+        'creation_date': 1,
       }
     }
   ]

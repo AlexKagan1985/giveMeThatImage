@@ -27,10 +27,10 @@ const HistoryItem = ({ item }) => {
     <div className={classes.creation_date}>{item.creation_date}</div>
   </div>;
 
-  const asPages = item.result_preview.my_pages?.find(p => p.provider === "artstation");
-  const daPages = item.result_preview.my_pages?.find(p => p.provider === "deviantart");
-  const usPages = item.result_preview.my_pages?.find(p => p.provider === "unsplash");
-  const paPages = item.result_preview.my_pages?.find(p => p.provider === "pixabay");
+  const asPages = item.result_preview.pages?.find(p => p.provider === "artstation");
+  const daPages = item.result_preview.pages?.find(p => p.provider === "deviantart");
+  const usPages = item.result_preview.pages?.find(p => p.provider === "unsplash");
+  const paPages = item.result_preview.pages?.find(p => p.provider === "pixabay");
 
   const QueryStatsElement = <div className={classes.item_stats}>
     {asPages && <div>Artstation: {asPages.maxPages} pages</div>}
@@ -39,7 +39,7 @@ const HistoryItem = ({ item }) => {
     {paPages && <div>Pixabay: {paPages.maxPages} pages</div>}
   </div>
 
-  const largestResult = useMemo(() => item.result_preview.my_pages.reduce((prevVal, currentVal) => {
+  const largestResult = useMemo(() => item.result_preview.pages.reduce((prevVal, currentVal) => {
     if (prevVal.maxPages > currentVal.maxPages) {
       return prevVal;
     }
