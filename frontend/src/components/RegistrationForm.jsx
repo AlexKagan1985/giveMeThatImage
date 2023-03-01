@@ -5,6 +5,7 @@ import { Alert, Button, FloatingLabel, Form } from "react-bootstrap"
 import { useNavigate } from "react-router-dom";
 import { Formik } from "formik";
 import { object, string } from "yup";
+import classes from "./RegistrationForm.module.scss";
 
 const InnerForm = (params) => {
   console.log("params", params);
@@ -20,7 +21,7 @@ const InnerForm = (params) => {
 
   return (
 
-    <Form onSubmit={handleSubmit} noValidate validated={false}>
+    <Form onSubmit={handleSubmit} noValidate validated={false} className={classes.registration_form}>
       <FloatingLabel controlId={loginFieldId} label="login" className="mb-3">
         <Form.Control
           onBlur={handleBlur}

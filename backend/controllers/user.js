@@ -68,5 +68,6 @@ export async function loginUser(req, res) {
     token,
     email: myUser.email,
     description: myUser.description,
+    login,
   });
 }

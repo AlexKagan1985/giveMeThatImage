@@ -20,26 +20,25 @@ const Paginated = ({ totalPages, setCurrentPage, currentPage }) => {
   } else {
     results.push(
       <>
-        <Pagination.First />
-        <Pagination.Prev />
-        <Pagination.Item onClick={() => setCurrentPage(1)}>{1}</Pagination.Item>
-        <Pagination.Ellipsis />
+        <Pagination.First onClick={() => setCurrentPage(1)} disabled={currentPage === 1} />
+        <Pagination.Prev onClick={() => setCurrentPage(currentPage-1)} disabled={currentPage === 1}/>
+        {currentPage > 3 && <Pagination.Ellipsis />}
+        {Array.from({ length: 5 }).map((_, idx) => {
+          const linksToPage = currentPage - 2 + idx;
+          return linksToPage >= 1 && linksToPage <= totalPages ? (
+            <Pagination.Item
+              key={idx}
+              onClick={() => setCurrentPage(linksToPage)}
+              active={linksToPage === currentPage}
+            >
+              {linksToPage}
+            </Pagination.Item>
+          ) : null;
+        })}
 
-        {Array.from({ length: 5 }).map((_, idx) => (
-          <Pagination.Item
-            key={idx}
-            onClick={() => setCurrentPage(currentPage - idx + 3)}
-          >
-            {currentPage - idx + 3}
-          </Pagination.Item>
-        ))}
-
-        <Pagination.Ellipsis />
-        <Pagination.Item onClick={() => setCurrentPage(10)}>
-          {10}
-        </Pagination.Item>
-        <Pagination.Next />
-        <Pagination.Last />
+        {currentPage < totalPages - 2 && <Pagination.Ellipsis />}
+        <Pagination.Next onClick={() => setCurrentPage(currentPage+1)} disabled={currentPage === totalPages}/>
+        <Pagination.Last onClick={() => setCurrentPage(totalPages)} disabled={currentPage === totalPages}/>
       </>
     );
   }
@@ -65,26 +64,28 @@ function CardResult({ currentData }) {
 
   return (
     <>
+      <div className={classes.cards}>
       {pageData.state === "hasData"
         ? pageData.data.map((data) => (
-            <Card style={{ width: "18rem" }} key={data.id}>
+            <Card key={data.id} className={classes.card}>
               <Card.Img
                 variant="top"
                 src={data.preview_url}
                 className={classes.img}
               />
-              <Card.Body className={classes.body}>
+              <Card.Body className={classes.card_body}>
                 <Card.Title>{data.title}</Card.Title>
               </Card.Body>
               <ListGroup className="list-group-flush">
-                <ListGroup.Item>{`providor: ${currentData.provider}`}</ListGroup.Item>
+                <ListGroup.Item>{`provider: ${currentData.provider}`}</ListGroup.Item>
               </ListGroup>
-              <Card.Body className={classes.body}>
+              <Card.Body className={classes.card_body}>
                 <Card.Link href={data.img_url}>Card Link</Card.Link>
               </Card.Body>
             </Card>
           ))
         : "Loading..."}
+      </div>
       <Pagination>
         <Paginated
           totalPages={currentData.totalPages}
