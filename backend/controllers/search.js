@@ -451,5 +451,10 @@ export async function getQueryResults(req, res) {
     query_id: queryId,
   });
 
-  res.send(searchResults);
+  if (searchResults.length === 0) {
+    res.status(404).send("Dont exist");
+    return;
+  }
+
+  res.send(searchResults[0]);
 }

@@ -6,9 +6,10 @@ import Profile from "./components/Profile";
 import ImageDetails from "./components/ImageDetails";
 import RegistrationPage from "./components/RegistrationPage";
 import LoginPage from "./components/LoginPage";
-import UserSearchHistory from "./components/UserSearchHistory";
+import SearchHistory from "./components/SearchHistory";
 import { QueryClient, QueryClientProvider } from "react-query";
 import Navigationbar from "./components/Navigationbar";
+import SearchHistoryDetailedPage from "./components/SearchHistoryDetailedPage";
 
 function MainLayout () {
   return (
@@ -55,8 +56,12 @@ const router = createBrowserRouter([
       },
       {
         path: "/user-history",
-        element: <UserSearchHistory />
-      }
+        element: <SearchHistory />
+      },
+      {
+        path: "/user-history/:queryId",
+        element: <SearchHistoryDetailedPage />
+      },
     ]
   },
 ]);
