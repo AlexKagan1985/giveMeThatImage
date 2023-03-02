@@ -152,7 +152,7 @@ function Profile() {
     if (!user) {
         navigate(`/login/${encodeURIComponent(location.pathname)}`);
     }
-  }, [])
+  }, [userToken]);
 
   console.log("user ", user);
 

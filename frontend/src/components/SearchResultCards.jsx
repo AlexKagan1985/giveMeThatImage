@@ -6,7 +6,7 @@ import Card from "react-bootstrap/Card";
 import ListGroup from "react-bootstrap/ListGroup";
 // eslint-disable-next-line no-unused-vars
 import { PaginatedSearchResult } from "../atoms/search";
-import classes from "./CardResult.module.css";
+import classes from "./SearchResultCards.module.css";
 
 const Paginated = ({ totalPages, setCurrentPage, currentPage }) => {
   let result = null;
@@ -49,7 +49,7 @@ const Paginated = ({ totalPages, setCurrentPage, currentPage }) => {
  *
  * @param {CardResultProps} param
  */
-function CardResult({ currentData }) {
+function SearchResultCards({ currentData }) {
   const [currentPage, setCurrentPage] = useState(1);
   const pageAtom = useMemo(() => {
     return currentData.pageAtom(currentPage);
@@ -95,4 +95,4 @@ function CardResult({ currentData }) {
   );
 }
 
-export default CardResult;
+export default SearchResultCards;

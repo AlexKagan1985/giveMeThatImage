@@ -3,8 +3,8 @@ import React, { useState, useEffect } from "react";
 import Button from "react-bootstrap/Button";
 import { useParams } from "react-router";
 import { searchResultsFamily } from "../atoms/search";
-import CardResult from "./CardResult";
-import classes from "./SearchPage.module.css";
+import SearchResultCards from "./SearchResultCards";
+import classes from "./SearchPage.module.scss";
 
 function SearchPage() {
   const { query } = useParams();
@@ -26,12 +26,12 @@ function SearchPage() {
 
   return (
     <div>
-      <p>We have query: {query}</p>
+      <p className={classes.settings}>We have query: {query}</p>
       <div className={classes.settings}>Settings</div>
       <div className={classes.providers}>
         {providers.map((provider, idx) => (
           <Button
-            variant="outline-dark"
+            variant={idx !== currentProviderIdx ? "outline-dark" : "dark"}
             key={provider}
             className={classes.button}
             onClick={() => setCurrentProviderIdx(idx)}
@@ -40,7 +40,7 @@ function SearchPage() {
           </Button>
         ))}
       </div>
-      {searchResults.state === "hasData" ? <CardResult currentData={searchResults.data[currentProviderIdx]} /> : "Loading..."}
+      {searchResults.state === "hasData" ? <SearchResultCards currentData={searchResults.data[currentProviderIdx]} /> : "Loading..."}
     </div>
   );
 }
