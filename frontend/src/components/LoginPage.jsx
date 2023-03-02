@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom"
+import { NavLink, useParams } from "react-router-dom"
 import LoginForm from "./LoginForm";
 import classes from "./LoginPage.module.scss";
 
@@ -9,6 +9,8 @@ const LoginPage = () => {
       <h2>Login page</h2>
 
       <LoginForm redirect={redirect} />
+
+      <p> Do you want to register? <NavLink to={`/register/${encodeURIComponent(redirect)}`}>Click here</NavLink></p>
     </div>
   )
 }

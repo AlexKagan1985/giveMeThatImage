@@ -9,7 +9,7 @@ function Home() {
 
   const handleSubmit = useCallback((e) => {
     e.preventDefault();
-    navigate(`/search/${searchQuery}`);
+    navigate(`/search/${encodeURIComponent(searchQuery)}`);
   }, [searchQuery])
 
   return (

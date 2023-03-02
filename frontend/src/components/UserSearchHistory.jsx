@@ -97,13 +97,14 @@ const UserSearchHistory = () => {
       // log in first if you dont have real user token
       navigate(`/login/${encodeURIComponent(location.pathname)}`);
     }
-  }, [])
+  }, [userToken])
 
   return (
     <div className={classes.container}>
       User search history goes here!
-      <p> Your username is: {userState.login}</p>
+      {userState && <p> Your username is: {userState.login}</p>}
       {isLoading && <p>We are loading data...</p>}
+      {error && <p>We have an error, Scotty!</p>}
       <ul className={classes.history_list}>
         {lastQueries.map(val => (
           <HistoryItem item={val} key={val._id} />

@@ -13,7 +13,7 @@ const Paginated = ({ totalPages, setCurrentPage, currentPage }) => {
 
   if (totalPages < 7) {
     result = Array.from({length: totalPages}).map((_val, i) => (
-      <Pagination.Item onClick={() => setCurrentPage(i)} key={i}> i </Pagination.Item>
+      <Pagination.Item onClick={() => setCurrentPage(i+1)} key={i}> {i+1} </Pagination.Item>
     ));
   } else {
     result = (
@@ -82,7 +82,7 @@ function CardResult({ currentData }) {
               </Card.Body>
             </Card>
           ))
-        : "Loading..."}
+        : pageData.state === "loading" ? "Loading..." : "We have some error here, try to go back and redo the search again"}
       </div>
       <Pagination>
         <Paginated
