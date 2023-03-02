@@ -45,7 +45,7 @@ const Paginated = ({ pageCount, setCurrentPage, currentPage, paginator }) => {
     const nextPages = nextNPages(7);
     const prevPages = prevNPages(7);
     result = [...prevPages, currentPage, ...nextPages].map((i) => (
-      <Pagination.Item onClick={() => setCurrentPage(i)} key={i} active={i === currentPage}> {i} </Pagination.Item>
+      <Pagination.Item onClick={() => setCurrentPage(i)} key={i} active={i === currentPage}> {" "}{i}{" "} </Pagination.Item>
     ));
   } else {
     const nextPages = nextNPages(2);
@@ -74,17 +74,17 @@ const Paginated = ({ pageCount, setCurrentPage, currentPage, paginator }) => {
         <Pagination.Next onClick={() => setCurrentPage(nextPage)} disabled={!nextPage}/>
         <Pagination.Last onClick={() => setCurrentPage(paginator.lastPageNumber())} disabled={currentPage === paginator.lastPageNumber()}/>
       </>
-    )
+    );
   }
   return result;
 };
 
-function SearchResultCard ({data, provider}) {
+function SearchResultCard({ data, provider }) {
   const thisCard = useRef();
 
   useEffect(() => {
-    const centerX = window.innerWidth/2;
-    const centerY = window.innerHeight/2;
+    const centerX = window.innerWidth / 2;
+    const centerY = window.innerHeight / 2;
 
     const mouseMoveHandler = (e) => {
       if (!thisCard.current) {
@@ -94,31 +94,27 @@ function SearchResultCard ({data, provider}) {
       const mouseY = e.clientY;
       //console.log("x, ", mouseX, "y, ", mouseY);
       // console.log("the card is ", thisCard.current);
-      
-      const x_diff = 0.08* (mouseX - centerX);
-      const y_diff = 0.2*(mouseY - centerY);
-      
+
+      const x_diff = 0.017 * (mouseX - centerX);
+      const y_diff = 0.017 * (mouseY - centerY);
+
       // console.log("x", x_diff, "y", y_diff);
-      
+
       thisCard.current.style.setProperty("--rotateX", -y_diff + "deg");
       thisCard.current.style.setProperty("--rotateY", x_diff + "deg");
-    }
+    };
     // after mount
     addEventListener("mousemove", mouseMoveHandler);
-    
+
     return () => {
       // before unmount
       removeEventListener("mousemove", mouseMoveHandler);
-    }
+    };
   }, []);
 
   return (
     <Card className={classes.card} ref={thisCard}>
-      <Card.Img
-        variant="top"
-        src={data.preview_url}
-        className={classes.img}
-      />
+      <Card.Img variant="top" src={data.preview_url} className={classes.img} />
       <Card.Body className={classes.card_body}>
         <Card.Title>{data.title}</Card.Title>
       </Card.Body>
@@ -129,7 +125,7 @@ function SearchResultCard ({data, provider}) {
         <Card.Link href={data.img_url}>Card Link</Card.Link>
       </Card.Body>
     </Card>
-  )
+  );
 }
 
 /**
@@ -143,7 +139,7 @@ function SearchResultCards({ currentData }) {
 
   // If currentData changes, reset the currentPage
   useEffect(() => {
-    console.log("resetting current page")
+    console.log("resetting current page");
     setCurrentPage(1);
   }, [currentData]);
 
@@ -159,11 +155,17 @@ function SearchResultCards({ currentData }) {
   return (
     <>
       <div className={classes.cards}>
-      {pageData.state === "hasData"
-        ? pageData.data?.map((data) => (
-            <SearchResultCard data={data} provider={currentData.provider} key={data.id} />
-          ))
-        : pageData.state === "loading" ? "Loading..." : "We have some error here, try to go back and redo the search again"}
+        {pageData.state === "hasData"
+          ? pageData.data?.map((data) => (
+              <SearchResultCard
+                data={data}
+                provider={currentData.provider}
+                key={data.id}
+              />
+            ))
+          : pageData.state === "loading"
+          ? "Loading..."
+          : "We have some error here, try to go back and redo the search again"}
       </div>
       <Pagination className={classes.center_this}>
         <Paginated
