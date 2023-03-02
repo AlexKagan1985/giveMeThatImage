@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { useAtomValue } from "jotai";
-import React, { useMemo, useState, useEffect } from "react";
+import React, { useMemo, useState, useEffect, useRef } from "react";
 import { Pagination } from "react-bootstrap";
 import Card from "react-bootstrap/Card";
 import ListGroup from "react-bootstrap/ListGroup";
@@ -43,6 +43,59 @@ const Paginated = ({ totalPages, setCurrentPage, currentPage }) => {
   return result;
 };
 
+function SearchResultCard ({data, provider}) {
+  const thisCard = useRef();
+
+  useEffect(() => {
+    const centerX = window.innerWidth/2;
+    const centerY = window.innerHeight/2;
+
+    const mouseMoveHandler = (e) => {
+      if (!thisCard.current) {
+        return;
+      }
+      const mouseX = e.clientX;
+      const mouseY = e.clientY;
+      //console.log("x, ", mouseX, "y, ", mouseY);
+      console.log("the card is ", thisCard.current);
+      
+      const x_diff = 0.08* (mouseX - centerX);
+      const y_diff = 0.2*(mouseY - centerY);
+      
+      console.log("x", x_diff, "y", y_diff);
+      
+      thisCard.current.style.setProperty("--rotateX", -y_diff + "deg");
+      thisCard.current.style.setProperty("--rotateY", x_diff + "deg");
+    }
+    // after mount
+    addEventListener("mousemove", mouseMoveHandler);
+    
+    return () => {
+      // before unmount
+      removeEventListener("mousemove", mouseMoveHandler);
+    }
+  }, []);
+
+  return (
+    <Card className={classes.card} ref={thisCard}>
+      <Card.Img
+        variant="top"
+        src={data.preview_url}
+        className={classes.img}
+      />
+      <Card.Body className={classes.card_body}>
+        <Card.Title>{data.title}</Card.Title>
+      </Card.Body>
+      <ListGroup className="list-group-flush">
+        <ListGroup.Item>{`provider: ${provider}`}</ListGroup.Item>
+      </ListGroup>
+      <Card.Body className={classes.card_body}>
+        <Card.Link href={data.img_url}>Card Link</Card.Link>
+      </Card.Body>
+    </Card>
+  )
+}
+
 /**
  * @typedef {object} CardResultProps
  * @property {PaginatedSearchResult} currentData
@@ -72,22 +125,7 @@ function SearchResultCards({ currentData }) {
       <div className={classes.cards}>
       {pageData.state === "hasData"
         ? pageData.data?.map((data) => (
-            <Card key={data.id} className={classes.card}>
-              <Card.Img
-                variant="top"
-                src={data.preview_url}
-                className={classes.img}
-              />
-              <Card.Body className={classes.card_body}>
-                <Card.Title>{data.title}</Card.Title>
-              </Card.Body>
-              <ListGroup className="list-group-flush">
-                <ListGroup.Item>{`provider: ${currentData.provider}`}</ListGroup.Item>
-              </ListGroup>
-              <Card.Body className={classes.card_body}>
-                <Card.Link href={data.img_url}>Card Link</Card.Link>
-              </Card.Body>
-            </Card>
+            <SearchResultCard data={data} provider={currentData.provider} key={data.id} />
           ))
         : pageData.state === "loading" ? "Loading..." : "We have some error here, try to go back and redo the search again"}
       </div>

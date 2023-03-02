@@ -10,7 +10,13 @@
 }
 
 .card {
-    text-align: center;
+    text-align: center;  
+    --rotateX: 20deg;
+    --rotateY: 15deg;
+    
+    transform: perspective(1000px)
+      rotateX(var(--rotateX))
+      rotateY(var(--rotateY));
 }
 
 .cards{
