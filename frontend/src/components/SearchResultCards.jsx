@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { useAtomValue } from "jotai";
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import { Pagination } from "react-bootstrap";
 import Card from "react-bootstrap/Card";
 import ListGroup from "react-bootstrap/ListGroup";
@@ -51,6 +51,13 @@ const Paginated = ({ totalPages, setCurrentPage, currentPage }) => {
  */
 function SearchResultCards({ currentData }) {
   const [currentPage, setCurrentPage] = useState(1);
+
+  // If currentData changes, reset the currentPage
+  useEffect(() => {
+    console.log("resetting current page")
+    setCurrentPage(1);
+  }, [currentData]);
+
   const pageAtom = useMemo(() => {
     return currentData.pageAtom(currentPage);
   }, [currentPage, currentData]);
@@ -64,7 +71,7 @@ function SearchResultCards({ currentData }) {
     <>
       <div className={classes.cards}>
       {pageData.state === "hasData"
-        ? pageData.data.map((data) => (
+        ? pageData.data?.map((data) => (
             <Card key={data.id} className={classes.card}>
               <Card.Img
                 variant="top"
@@ -84,7 +91,7 @@ function SearchResultCards({ currentData }) {
           ))
         : pageData.state === "loading" ? "Loading..." : "We have some error here, try to go back and redo the search again"}
       </div>
-      <Pagination>
+      <Pagination className={classes.center_this}>
         <Paginated
           totalPages={currentData.totalPages}
           setCurrentPage={setCurrentPage}

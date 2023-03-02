@@ -10,14 +10,18 @@
 }
 
 .card {
-    width: 20rem;
     text-align: center;
 }
 
 .cards{
-    display: flex;
-    flex-flow: row wrap;
-    justify-content: space-around;
+    display: grid;
+    /* grid magic line */
+    grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
     gap: 1.5rem;
     margin: 1rem;
+}
+
+.center_this {
+    margin-inline: auto;
+    width: fit-content;
 }

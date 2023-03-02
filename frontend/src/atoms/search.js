@@ -15,6 +15,10 @@ export class PaginatedSearchResult {
   }
 
   async page(pageNumber) {
+    if (pageNumber > this.totalPages) {
+      console.error("Seeing unexpectedly high page number in search.js. PaginatedSearchResult.page() function");
+      return;
+    }
     // see if we have this page already, and if we do, just return it
     if (this.pageMap.has(pageNumber)) {
       return this.pageMap.get(pageNumber);
