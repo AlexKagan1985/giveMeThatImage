@@ -3,6 +3,7 @@
 
 .container {
     @include commons.content-centered;
+    margin-bottom: 5rem;
 }
 
 .history_list {

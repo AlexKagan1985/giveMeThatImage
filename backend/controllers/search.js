@@ -377,13 +377,14 @@ export async function getSearchResults(req, res) {
 export async function getPreviousQueries(req, res) {
   const userData = req.user;
   const { after } = req.query;
+  console.log("seeing after parameter, ", after);
   const queryAggregationPipeline = [
     {
       '$match': {
         'user_id': userData._id,
         ... (after ? {
           'creation_date': {
-            '$lt': after,
+            '$lt': new Date(after),
           }
         } : {}),
       }
@@ -392,7 +393,7 @@ export async function getPreviousQueries(req, res) {
         'creation_date': -1,
       }
     }, {
-      '$limit': 15,
+      '$limit': 7,
     }, {
       '$lookup': {
         'from': 'searchresults',
