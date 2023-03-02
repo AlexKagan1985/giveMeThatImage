@@ -11,8 +11,8 @@
 
 .card {
     text-align: center;  
-    --rotateX: 20deg;
-    --rotateY: 15deg;
+    --rotateX: 5deg;
+    --rotateY: 5deg;
     
     transform: perspective(1000px)
       rotateX(var(--rotateX))
