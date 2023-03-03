@@ -9,7 +9,7 @@ const USERROR = 3; // error in Unsplash request
 const PBERROR = 4; // error in Pixabay request
 
 const PAGE_LIMIT = 20;
-
+const HISTORY_PAGE_SIZE = 7; // see also the constant in frontend/src/components/SearchHistory.jsx
 class SearchError extends Error {
   constructor(ty, msg) {
     super(`${ty}: ${msg}`);
@@ -393,7 +393,7 @@ export async function getPreviousQueries(req, res) {
         'creation_date': -1,
       }
     }, {
-      '$limit': 7,
+      '$limit': HISTORY_PAGE_SIZE,
     }, {
       '$lookup': {
         'from': 'searchresults',

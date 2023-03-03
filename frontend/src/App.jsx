@@ -36,6 +36,10 @@ const router = createBrowserRouter([
       },
       {
         path: "/search/:query",
+        element: <SearchPage />
+      },
+      {
+        path: "/search/:query/:provider/:page",
         element: <SearchPage />,
       },
       {
@@ -43,7 +47,7 @@ const router = createBrowserRouter([
         element: <Profile />,
       },
       {
-        path: "/image/:id",
+        path: "/image",
         element: <ImageDetails />,
       },
       {
@@ -60,6 +64,10 @@ const router = createBrowserRouter([
       },
       {
         path: "/user-history/:queryId",
+        element: <SearchHistoryDetailedPage />
+      },
+      {
+        path: "/user-history/:queryId/:provider/:page",
         element: <SearchHistoryDetailedPage />
       },
     ]

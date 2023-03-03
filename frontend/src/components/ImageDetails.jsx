@@ -1,20 +1,16 @@
-import React from "react";
+import { useAtomValue } from "jotai";
 import Card from "react-bootstrap/Card";
+import { NavLink } from "react-router-dom";
+import { selectedImageAtom } from "../atoms/imageDetails";
 // import { useParams } from "react-router-dom";
 import classes from "./ImageDetails.module.css";
 
 function ImageDetails() {
-  // const { id } = useParams();
-  // const image = testData.find((image) => image.id === id);
-  const image = {
-    id: 1,
-    title: "test",
-    author_name: "test",
-    img_url:
-      "https://images.unsplash.com/photo-1626120000000-1c1e1e1e1e1e?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
-  };
+  const image = useAtomValue(selectedImageAtom);
+
   return (
     <>
+      {image ? (
       <Card className={classes.card}>
         <Card.Img variant="top" src={image.img_url} />
         <Card.Body>
@@ -24,6 +20,12 @@ function ImageDetails() {
           </Card.Text>
         </Card.Body>
       </Card>
+      ) : (
+      <div>
+        <p>No image was selected. Something wrong must have happened. </p>
+        <NavLink to="/">Go back</NavLink>
+      </div>
+      )}
     </>
   );
 }
