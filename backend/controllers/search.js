@@ -99,10 +99,10 @@ async function retrieveDAResults(query, pageNumber) {
 
   // filter out literary content 
 
-  const resultsFilteredArray = resultsArray.filter(val => val.category !== "Literature" && !val.is_mature) ;
+  const resultsFilteredArray = resultsArray.filter(val => val.category !== "Literature" && !val.is_mature && val.content?.src) ;
 
   const searchResultArray = resultsFilteredArray.map((val) => ({
-    img_url: val.url,
+    img_url: val.content.src,
     title: val.title,
     author_id: val.author.userid,
     author_name: val.author.username,
