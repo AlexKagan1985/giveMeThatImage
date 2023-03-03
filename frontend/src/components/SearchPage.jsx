@@ -21,13 +21,12 @@ function SearchPage() {
         console.log("error detected. Attempting cleanup...");
         searchResultsFamily.remove(query);
       }
-    }
-  })
+    };
+  });
 
   return (
     <div>
       <p className={classes.settings}>We have query: {query}</p>
-      <div className={classes.settings}>Settings</div>
       <div className={classes.providers}>
         {providers.map((provider, idx) => (
           <Button
@@ -40,7 +39,13 @@ function SearchPage() {
           </Button>
         ))}
       </div>
-      {searchResults.state === "hasData" ? <SearchResultCards currentData={searchResults.data[currentProviderIdx]} /> : "Loading..."}
+      {searchResults.state === "hasData" ? (
+        <SearchResultCards
+          currentData={searchResults.data[currentProviderIdx]}
+        />
+      ) : (
+        "Loading..."
+      )}
     </div>
   );
 }
