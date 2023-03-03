@@ -116,17 +116,20 @@ function SearchResultCard({ data, provider }) {
     };
   }, []);
 
-  const handleSeeImage = () => {
+  const handleSeeImage = (e) => {
+    e.preventDefault();
     setCurrentImage(data);
     navigate("/image");
   }
 
   return (
     <Card className={classes.card} ref={thisCard}>
-      <Card.Img variant="top" src={data.preview_url} className={classes.img} />
-      <Card.Body className={classes.card_body}>
-        <Card.Title>{data.title}</Card.Title>
-      </Card.Body>
+      <a href="#" onClick={handleSeeImage}>
+        <Card.Img variant="top" src={data.preview_url} className={classes.img} />
+        <Card.Body className={classes.card_body}>
+          <Card.Title>{data.title}</Card.Title>
+        </Card.Body>
+      </a>
       <ListGroup className="list-group-flush">
         <ListGroup.Item>{`provider: ${provider}`}</ListGroup.Item>
       </ListGroup>
