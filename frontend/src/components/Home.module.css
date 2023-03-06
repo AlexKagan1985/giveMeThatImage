@@ -10,17 +10,19 @@
   border-width: 1.5px;
 }
 
-.form{
+.form {
   display: flex;
   margin-inline: 6rem;
 }
 
-.searchButton{
+.searchButton {
   border-radius: 1vw;
   border-color: rgb(53, 53, 55);
   border-width: 1.5px;
-  padding-inline-start: 1vw;
-  padding-inline-end: 1vw;
+  -webkit-padding-start: 1vw;
+          padding-inline-start: 1vw;
+  -webkit-padding-end: 1vw;
+          padding-inline-end: 1vw;
 }
 
 .keywords {
@@ -29,5 +31,4 @@
   flex-wrap: wrap;
   margin-top: 2rem;
   margin-inline: auto;
-}
-
+}/*# sourceMappingURL=Home.module.css.map */
