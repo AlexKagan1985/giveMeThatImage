@@ -165,13 +165,13 @@ export const searchResultsFamily = atomFamily((query) => {
     const queryId = resultData.data._id;
     const pixabayResult = rawSearchResults.find(val => val.provider === "pixabay");
     const asResult = rawSearchResults.find(val => val.provider === "artstation");
-    const daResult = rawSearchResults.find(val => val.provider === "deviantart");
+    // const daResult = rawSearchResults.find(val => val.provider === "deviantart");
     const unsplashResult = rawSearchResults.find(val => val.provider === "unsplash");
 
     return [
       new PaginatedSearchResult(pixabayResult.maxPages, pixabayResult.maxPages, pixabayResult.data, createPageProvider("pixabay", query, queryId, pixabayResult.maxPages), "pixabay"),
       new PaginatedSearchResult(asResult.maxPages, asResult.maxPages, asResult.data, createPageProvider("artstation", query, queryId, asResult.maxPages), "artstation"),
-      new PaginatedSearchResult(daResult.maxPages, daResult.maxPages, daResult.data, createPageProvider("deviantart", query, queryId, daResult.maxPages), "deviantart"),
+      // new PaginatedSearchResult(daResult.maxPages, daResult.maxPages, daResult.data, createPageProvider("deviantart", query, queryId, daResult.maxPages), "deviantart"),
       new PaginatedSearchResult(unsplashResult.maxPages, unsplashResult.maxPages, unsplashResult.data, createPageProvider("unsplash", query, queryId, unsplashResult.maxPages), "unsplash"),
     ]
   });
@@ -193,8 +193,8 @@ export const searchHistoryFamily = atomFamily((queryId) => {
     console.log("retrieved pages with", result.data);
     const pages = result.data.pages;
 
-    const pageCountMap = new Map([["pixabay", 0], ["artstation", 0], ["deviantart", 0], ["unsplash", 0]]);
-    const maxPagesMap = new Map([["pixabay", Infinity], ["artstation", Infinity], ["deviantart", Infinity], ["unsplash", Infinity]]);
+    const pageCountMap = new Map([["pixabay", 0], ["artstation", 0], /* ["deviantart", 0], */ ["unsplash", 0]]);
+    const maxPagesMap = new Map([["pixabay", Infinity], ["artstation", Infinity], /* ["deviantart", Infinity], */ ["unsplash", Infinity]]);
     result.data.pages.forEach(p => {
       pageCountMap.set(p.provider, pageCountMap.get(p.provider) + 1);
       maxPagesMap.set(p.provider, Math.min(p.maxPages, maxPagesMap.get(p.provider)));
@@ -203,7 +203,7 @@ export const searchHistoryFamily = atomFamily((queryId) => {
     return [
       new PaginatedSearchResult(maxPagesMap.get("pixabay"), pageCountMap.get("pixabay"), null, historicalPageProvider("pixabay", pages), "pixabay"),
       new PaginatedSearchResult(maxPagesMap.get("artstation"), pageCountMap.get("artstation"), null, historicalPageProvider("artstation", pages), "artstation"),
-      new PaginatedSearchResult(maxPagesMap.get("deviantart"), pageCountMap.get("deviantart"), null, historicalPageProvider("deviantart", pages), "deviantart"),
+      // new PaginatedSearchResult(maxPagesMap.get("deviantart"), pageCountMap.get("deviantart"), null, historicalPageProvider("deviantart", pages), "deviantart"),
       new PaginatedSearchResult(maxPagesMap.get("unsplash"), pageCountMap.get("unsplash"), null, historicalPageProvider("unsplash", pages), "unsplash"),
     ]
   }));

@@ -10,7 +10,7 @@ function SearchHistoryDetailedPage() {
   const pageNumber = page === undefined ? 1 : parseInt(page);
   const currentProviderIdx = provider !== undefined ? parseInt(provider) : 0;
   // const [currentProviderIdx, setCurrentProviderIdx] = useState(0); //index in the providers array, from 0 to 3
-  const providers = ["Pixabay", "ArtStation", "DeviantArt", "Unsplash"];
+  const providers = ["Pixabay", "ArtStation", /* "DeviantArt", */ "Unsplash"];
   const searchResultsAtom = searchHistoryFamily(queryId);
   const searchResults = useAtomValue(searchResultsAtom);
   const navigate = useNavigate();

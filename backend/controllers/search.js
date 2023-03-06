@@ -288,7 +288,7 @@ export async function getSearchResults(req, res) {
   const { q, type, page, queryId } = req.query;
   const userData = req.user;
   console.log("current user data: ", userData);
-  const PROVIDERS_ARRAY = ["pixabay", "artstation", "deviantart", "unsplash"];
+  const PROVIDERS_ARRAY = ["pixabay", "artstation", /* "deviantart", */ "unsplash"];
   const types = (() => {
     const temp = type ? type.split(",") : PROVIDERS_ARRAY;
     return temp.filter(val => PROVIDERS_ARRAY.includes(val));
@@ -296,7 +296,7 @@ export async function getSearchResults(req, res) {
   const typeFuncsMap = new Map([
     ["pixabay", retrievePixabayResults],
     ["artstation", retrieveASResults],
-    ["deviantart", retrieveDAResults],
+    // ["deviantart", retrieveDAResults],
     ["unsplash", retrieveUnsplashResults],
   ])
   const pageNumber = (() => {

@@ -14,7 +14,7 @@ function SearchPage() {
   const searchResultsAtom = searchResultsFamily(query);
   const searchResults = useAtomValue(searchResultsAtom);
   const navigate = useNavigate();
-  const providers = ["Pixabay", "ArtStation", "DeviantArt", "Unsplash"];
+  const providers = ["Pixabay", "ArtStation", /* "DeviantArt", */ "Unsplash"];
 
   console.log("search result atom content: ", searchResults);
 
