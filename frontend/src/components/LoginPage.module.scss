@@ -2,4 +2,5 @@
 
 .loginpage {
     @include commons.content-centered;
+    @include commons.avoid-navbar;
 }

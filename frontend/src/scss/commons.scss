@@ -6,3 +6,8 @@ $form-width: $content-width;
     max-width: $content-width;
     margin-inline: auto;
 }
+
+@mixin avoid-navbar {
+  --navbar-margin: 80px;
+  padding-top: var(--navbar-margin);
+}
