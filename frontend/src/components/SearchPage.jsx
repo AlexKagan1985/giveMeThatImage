@@ -1,5 +1,5 @@
 import { useAtomValue } from "jotai";
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import Button from "react-bootstrap/Button";
 import { useNavigate/* , useParams */ } from "react-router";
 import { searchResultsFamily } from "../atoms/search";
@@ -15,6 +15,13 @@ function SearchPage({query, provider, page}) {
   const searchResults = useAtomValue(searchResultsAtom);
   const navigate = useNavigate();
   const providers = ["Pixabay", "ArtStation", /* "DeviantArt", */ "Unsplash"];
+
+  const realProviders = useMemo(() => {
+    if (searchResults.state !== "hasData") {
+      return [];
+    }
+    return searchResults.data.map(val => providers.find(pName => val.providerName === pName.toLowerCase()));
+  }, [searchResults])
 
   console.log("search result atom content: ", searchResults);
 
@@ -39,7 +46,7 @@ function SearchPage({query, provider, page}) {
     <div>
       {/* <p className={classes.settings}>We have query: {query}</p> */ }
       <div className={classes.providers}>
-        {providers.map((provider, idx) => (
+        {realProviders.map((provider, idx) => (
           <Button
             variant={idx !== currentProviderIdx ? "outline-dark" : "dark"}
             key={provider}

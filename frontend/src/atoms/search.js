@@ -168,12 +168,14 @@ export const searchResultsFamily = atomFamily((query) => {
     // const daResult = rawSearchResults.find(val => val.provider === "deviantart");
     const unsplashResult = rawSearchResults.find(val => val.provider === "unsplash");
 
-    return [
-      new PaginatedSearchResult(pixabayResult.maxPages, pixabayResult.maxPages, pixabayResult.data, createPageProvider("pixabay", query, queryId, pixabayResult.maxPages), "pixabay"),
-      new PaginatedSearchResult(asResult.maxPages, asResult.maxPages, asResult.data, createPageProvider("artstation", query, queryId, asResult.maxPages), "artstation"),
-      // new PaginatedSearchResult(daResult.maxPages, daResult.maxPages, daResult.data, createPageProvider("deviantart", query, queryId, daResult.maxPages), "deviantart"),
-      new PaginatedSearchResult(unsplashResult.maxPages, unsplashResult.maxPages, unsplashResult.data, createPageProvider("unsplash", query, queryId, unsplashResult.maxPages), "unsplash"),
-    ]
+    const resultArray = [];
+    for (const [prov, data] of [["pixabay", pixabayResult], ["artstation", asResult], ["unsplash", unsplashResult]]) {
+      if (data && data.maxPages > 0) {
+        resultArray.push(new PaginatedSearchResult(data.maxPages, data.maxPages, data.data, createPageProvider(prov, query, queryId, data.maxPages), prov));
+      }
+    }
+
+    return resultArray;
   });
   return loadable(resAsync);
 });
@@ -200,12 +202,14 @@ export const searchHistoryFamily = atomFamily((queryId) => {
       maxPagesMap.set(p.provider, Math.min(p.maxPages, maxPagesMap.get(p.provider)));
     });
 
-    return [
-      new PaginatedSearchResult(maxPagesMap.get("pixabay"), pageCountMap.get("pixabay"), null, historicalPageProvider("pixabay", pages), "pixabay"),
-      new PaginatedSearchResult(maxPagesMap.get("artstation"), pageCountMap.get("artstation"), null, historicalPageProvider("artstation", pages), "artstation"),
-      // new PaginatedSearchResult(maxPagesMap.get("deviantart"), pageCountMap.get("deviantart"), null, historicalPageProvider("deviantart", pages), "deviantart"),
-      new PaginatedSearchResult(maxPagesMap.get("unsplash"), pageCountMap.get("unsplash"), null, historicalPageProvider("unsplash", pages), "unsplash"),
-    ]
+    const resultArray = [];
+    for (const prov of ["pixabay", "artstation", "unsplash"]) {
+      if ( maxPagesMap.get(prov) !== Infinity && maxPagesMap.get(prov) > 0 ) {
+        resultArray.push(new PaginatedSearchResult(maxPagesMap.get(prov), pageCountMap.get(prov), null, historicalPageProvider(prov, pages), prov))
+      }
+    }
+
+    return resultArray;
   }));
 })
 

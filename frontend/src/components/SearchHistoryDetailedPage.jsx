@@ -1,4 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
+import { useMemo } from "react";
 import { searchHistoryFamily } from "../atoms/search";
 import classes from "./SearchPage.module.scss";
 import SearchResultCards from "./SearchResultCards";
@@ -15,6 +16,13 @@ function SearchHistoryDetailedPage() {
   const searchResults = useAtomValue(searchResultsAtom);
   const navigate = useNavigate();
 
+  const realProviders = useMemo(() => {
+    if (searchResults.state !== "hasData") {
+      return [];
+    }
+    return searchResults.data.map(val => providers.find(pName => val.providerName === pName.toLowerCase()));
+  }, [searchResults])
+
   console.log("current results are ", searchResults);
 
   const setCurrentProviderIdx = (pIdx) => {
@@ -30,7 +38,7 @@ function SearchHistoryDetailedPage() {
       <p className={classes.settings}>We have query: {queryId}</p>
       <div className={classes.settings}>Settings</div>
       <div className={classes.providers}>
-        {providers.map((provider, idx) => (
+        {realProviders.map((provider, idx) => (
           <Button
             variant={idx !== currentProviderIdx ? "outline-dark" : "dark"}
             key={provider}
