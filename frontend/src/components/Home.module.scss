@@ -1,5 +1,7 @@
+
+
 .searchBar {
-  --padding-size: 1.3rem;
+  --padding-size: calc(var(--searchbar-height, 2.6rem) * 0.5);
   background: #f2f2f2;
   flex-grow: 1;
   height: calc(var(--padding-size) * 2);
@@ -10,8 +12,23 @@
 }
 
 .form{
+
   display: flex;
+  min-width: 80%;
   margin-inline: 6rem;
+}
+
+.form_container {
+  --navbar-margin: 80px;
+  --searchbar-height: 2.6rem;
+  transition-duration: 0.25s;
+  transition-property: transform;
+  transition-timing-function: ease;
+  margin-top: var(--navbar-margin);
+}
+
+.form_centered {
+  transform: translateY(calc(50dvh - var(--searchbar-height) * 0.5 - var(--navbar-margin)));
 }
 
 .searchButton{

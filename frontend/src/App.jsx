@@ -1,7 +1,7 @@
 import classes from "./App.module.scss";
 import { createBrowserRouter, Outlet, RouterProvider } from "react-router-dom";
 import Home from "./components/Home";
-import SearchPage from "./components/SearchPage";
+// import SearchPage from "./components/SearchPage";
 import Profile from "./components/Profile";
 import ImageDetails from "./components/ImageDetails";
 import RegistrationPage from "./components/RegistrationPage";
@@ -35,12 +35,16 @@ const router = createBrowserRouter([
         element: <Home />,
       },
       {
+        path: "/search",
+        element: <Home />
+      },
+      {
         path: "/search/:query",
-        element: <SearchPage />
+        element: <Home />
       },
       {
         path: "/search/:query/:provider/:page",
-        element: <SearchPage />,
+        element: <Home />,
       },
       {
         path: "/profile",

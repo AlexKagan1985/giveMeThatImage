@@ -1,13 +1,13 @@
 import { useAtomValue } from "jotai";
 import React, { useEffect } from "react";
 import Button from "react-bootstrap/Button";
-import { useNavigate, useParams } from "react-router";
+import { useNavigate/* , useParams */ } from "react-router";
 import { searchResultsFamily } from "../atoms/search";
 import SearchResultCards from "./SearchResultCards";
 import classes from "./SearchPage.module.scss";
 
-function SearchPage() {
-  const { query, provider, page } = useParams();
+function SearchPage({query, provider, page}) {
+  // const { query, provider, page } = useParams();
   const pageNumber = page === undefined ? 1 : parseInt(page);
   const currentProviderIdx = provider !== undefined ? parseInt(provider) : 0;
   //const [currentProviderIdx, setCurrentProviderIdx] = useState(provider !== undefined ? parseInt(provider) : 0); //index in the providers array, from 0 to 3
@@ -37,7 +37,7 @@ function SearchPage() {
 
   return (
     <div>
-      <p className={classes.settings}>We have query: {query}</p>
+      {/* <p className={classes.settings}>We have query: {query}</p> */ }
       <div className={classes.providers}>
         {providers.map((provider, idx) => (
           <Button
