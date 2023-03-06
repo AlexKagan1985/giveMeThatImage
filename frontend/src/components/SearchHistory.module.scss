@@ -3,6 +3,7 @@
 
 .container {
     @include commons.content-centered;
+    @include commons.avoid-navbar;
     margin-bottom: 5rem;
 }
 

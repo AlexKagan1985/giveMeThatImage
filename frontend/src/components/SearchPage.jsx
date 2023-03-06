@@ -1,20 +1,27 @@
 import { useAtomValue } from "jotai";
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import Button from "react-bootstrap/Button";
-import { useNavigate, useParams } from "react-router";
+import { useNavigate/* , useParams */ } from "react-router";
 import { searchResultsFamily } from "../atoms/search";
 import SearchResultCards from "./SearchResultCards";
 import classes from "./SearchPage.module.scss";
 
-function SearchPage() {
-  const { query, provider, page } = useParams();
+function SearchPage({query, provider, page}) {
+  // const { query, provider, page } = useParams();
   const pageNumber = page === undefined ? 1 : parseInt(page);
   const currentProviderIdx = provider !== undefined ? parseInt(provider) : 0;
   //const [currentProviderIdx, setCurrentProviderIdx] = useState(provider !== undefined ? parseInt(provider) : 0); //index in the providers array, from 0 to 3
   const searchResultsAtom = searchResultsFamily(query);
   const searchResults = useAtomValue(searchResultsAtom);
   const navigate = useNavigate();
-  const providers = ["Pixabay", "ArtStation", "DeviantArt", "Unsplash"];
+  const providers = ["Pixabay", "ArtStation", /* "DeviantArt", */ "Unsplash"];
+
+  const realProviders = useMemo(() => {
+    if (searchResults.state !== "hasData") {
+      return [];
+    }
+    return searchResults.data.map(val => providers.find(pName => val.providerName === pName.toLowerCase()));
+  }, [searchResults])
 
   console.log("search result atom content: ", searchResults);
 
@@ -37,9 +44,9 @@ function SearchPage() {
 
   return (
     <div>
-      <p className={classes.settings}>We have query: {query}</p>
+      {/* <p className={classes.settings}>We have query: {query}</p> */ }
       <div className={classes.providers}>
-        {providers.map((provider, idx) => (
+        {realProviders.map((provider, idx) => (
           <Button
             variant={idx !== currentProviderIdx ? "outline-dark" : "dark"}
             key={provider}
@@ -54,7 +61,7 @@ function SearchPage() {
       {searchResults.state === "hasData" ? <SearchResultCards 
         currentData={searchResults.data[currentProviderIdx]} 
         pageNumber={pageNumber} 
-        setCurrentPage={handleChangePageNumber}/> : "Loading..."}
+        setCurrentPage={handleChangePageNumber}/> : <SearchResultCards placeholder />}
 
     </div>
   );

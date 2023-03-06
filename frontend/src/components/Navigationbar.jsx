@@ -1,4 +1,4 @@
-import React from "react";
+import React, { forwardRef } from "react";
 import Navbar from "react-bootstrap/Navbar";
 import Avatar from "react-avatar";
 import classes from "./Navigationbar.module.scss";
@@ -7,7 +7,7 @@ import { useAtomValue } from "jotai";
 import { loggedInUser, logOut } from "../atoms/auth";
 import { Button } from "react-bootstrap";
 
-function Navigationbar() {
+function Navigationbar({ isFixed }, ref) {
   const theUser = useAtomValue(loggedInUser);
   const currentLocation = useLocation();
 
@@ -18,7 +18,7 @@ function Navigationbar() {
 
   return (
     <>
-      <Navbar className="fixed-top" bg="light">
+      <Navbar className={isFixed ? "fixed-top" : ""} bg="light" ref={ref}>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <NavLink
@@ -82,4 +82,4 @@ function Navigationbar() {
   );
 }
 
-export default Navigationbar;
+export default forwardRef(Navigationbar);

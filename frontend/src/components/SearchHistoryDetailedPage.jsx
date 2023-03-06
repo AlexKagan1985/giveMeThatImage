@@ -1,4 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
+import { useMemo } from "react";
 import { searchHistoryFamily } from "../atoms/search";
 import classes from "./SearchPage.module.scss";
 import SearchResultCards from "./SearchResultCards";
@@ -10,10 +11,17 @@ function SearchHistoryDetailedPage() {
   const pageNumber = page === undefined ? 1 : parseInt(page);
   const currentProviderIdx = provider !== undefined ? parseInt(provider) : 0;
   // const [currentProviderIdx, setCurrentProviderIdx] = useState(0); //index in the providers array, from 0 to 3
-  const providers = ["Pixabay", "ArtStation", "DeviantArt", "Unsplash"];
+  const providers = ["Pixabay", "ArtStation", /* "DeviantArt", */ "Unsplash"];
   const searchResultsAtom = searchHistoryFamily(queryId);
   const searchResults = useAtomValue(searchResultsAtom);
   const navigate = useNavigate();
+
+  const realProviders = useMemo(() => {
+    if (searchResults.state !== "hasData") {
+      return [];
+    }
+    return searchResults.data.map(val => providers.find(pName => val.providerName === pName.toLowerCase()));
+  }, [searchResults])
 
   console.log("current results are ", searchResults);
 
@@ -27,10 +35,8 @@ function SearchHistoryDetailedPage() {
 
   return (
     <div>
-      <p className={classes.settings}>We have query: {queryId}</p>
-      <div className={classes.settings}>Settings</div>
       <div className={classes.providers}>
-        {providers.map((provider, idx) => (
+        {realProviders.map((provider, idx) => (
           <Button
             variant={idx !== currentProviderIdx ? "outline-dark" : "dark"}
             key={provider}

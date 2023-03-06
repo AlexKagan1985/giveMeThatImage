@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { useAtom, useAtomValue } from "jotai";
+import { useAtom, useAtomValue, atom } from "jotai";
 import React, { useMemo, useState, useEffect, useRef, useCallback } from "react";
 import { Pagination } from "react-bootstrap";
 import Card from "react-bootstrap/Card";
@@ -9,6 +9,8 @@ import { selectedImageAtom } from "../atoms/imageDetails";
 // eslint-disable-next-line no-unused-vars
 import { PaginatedSearchResult } from "../atoms/search";
 import classes from "./SearchResultCards.module.css";
+
+const nullAtom = atom(() => null);
 
 const Paginated = ({ pageCount, setCurrentPage, currentPage, paginator }) => {
   let result = null;
@@ -81,7 +83,7 @@ const Paginated = ({ pageCount, setCurrentPage, currentPage, paginator }) => {
   return result;
 };
 
-function SearchResultCard({ data, provider }) {
+function SearchResultCard({ data, provider, placeholder }) {
   const thisCard = useRef();
   const navigate = useNavigate();
   const [, setCurrentImage] = useAtom(selectedImageAtom);
@@ -118,6 +120,10 @@ function SearchResultCard({ data, provider }) {
 
   const handleSeeImage = (e) => {
     e.preventDefault();
+    if (placeholder) {
+      // do nothing if it's a placeholder image
+      return;
+    }
     setCurrentImage(data);
     navigate("/image");
   }
@@ -125,16 +131,27 @@ function SearchResultCard({ data, provider }) {
   return (
     <Card className={classes.card} ref={thisCard}>
       <a href="#" onClick={handleSeeImage}>
-        <Card.Img variant="top" src={data.preview_url} className={classes.img} />
+        { !placeholder && <>
+        <div className={classes.image_block}>
+          <Card.Img variant="top" className={`${classes.img} placeholder placeholder-wave ${classes.placeholder_under}`} />
+          <Card.Img variant="top" src={data.preview_url} className={classes.img} />
+        </div>
         <Card.Body className={classes.card_body}>
           <Card.Title>{data.title}</Card.Title>
-        </Card.Body>
+        </Card.Body></> }
+        {placeholder && <><Card.Img variant="top" className={`${classes.img} placeholder placeholder-wave`} />
+        <Card.Body className={`${classes.card_body} placeholder-wave`}>
+          <Card.Title className="placeholder w-75"></Card.Title>
+        </Card.Body></> }
       </a>
-      <ListGroup className="list-group-flush">
+      { !placeholder && <ListGroup className="list-group-flush">
         <ListGroup.Item>{`provider: ${provider}`}</ListGroup.Item>
-      </ListGroup>
+      </ListGroup> }
+      { placeholder && <ListGroup className="list-group-flash placeholder-wave">
+        <ListGroup.Item className="placeholder w-75"></ListGroup.Item>
+      </ListGroup>}
       <Card.Body className={classes.card_body}>
-        <Card.Link href={data.img_url}>Card Link</Card.Link>
+        {!placeholder && <Card.Link href={data.img_url}>Card Link</Card.Link> }
       </Card.Body>
     </Card>
   );
@@ -146,7 +163,7 @@ function SearchResultCard({ data, provider }) {
  *
  * @param {CardResultProps} param
  */
-function SearchResultCards({ currentData, pageNumber, setCurrentPage }) {
+function SearchResultCards({ currentData, pageNumber, setCurrentPage, placeholder }) {
   // const [currentPage, setCurrentPage] = useState(pageNumber);
 
   // If currentData changes, reset the currentPage
@@ -156,10 +173,13 @@ function SearchResultCards({ currentData, pageNumber, setCurrentPage }) {
   // }, [currentData]);
 
   const pageAtom = useMemo(() => {
+    if (placeholder) {
+      return null;
+    }
     return currentData.pageAtom(pageNumber);
-  }, [pageNumber, currentData]);
+  }, [pageNumber, currentData, placeholder]);
 
-  const pageData = useAtomValue(pageAtom);
+  const pageData = placeholder ? useAtomValue(nullAtom) : useAtomValue(pageAtom);
 
   console.log("see current data: ", currentData);
   console.log("see page data: ", pageData);
@@ -167,7 +187,7 @@ function SearchResultCards({ currentData, pageNumber, setCurrentPage }) {
   return (
     <>
       <div className={classes.cards}>
-        {pageData.state === "hasData"
+        {!placeholder && pageData.state === "hasData"
           ? pageData.data?.map((data) => (
               <SearchResultCard
                 data={data}
@@ -175,18 +195,20 @@ function SearchResultCards({ currentData, pageNumber, setCurrentPage }) {
                 key={data.id}
               />
             ))
-          : pageData.state === "loading"
-          ? "Loading..."
+          : placeholder || pageData.state === "loading"
+          ? Array.from({length: 20}).map((_, idx) => (
+            <SearchResultCard placeholder={true} key={idx} />
+          ))
           : "We have some error here, try to go back and redo the search again"}
       </div>
-      <Pagination className={classes.center_this}>
+      {!placeholder && <Pagination className={classes.center_this}>
         <Paginated
           pageCount={currentData.pageCount}
           paginator={currentData.paginator}
           setCurrentPage={setCurrentPage}
           currentPage={pageNumber}
         />
-      </Pagination>
+      </Pagination>}
     </>
   );
 }

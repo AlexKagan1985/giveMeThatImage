@@ -23,6 +23,38 @@ function shuffle(a) {
   return a;
 }
 
+const HistoryItemPlaceholder = () => {
+
+  const SearchQueryElement = <div className={`${classes.item_query}`}>
+    <div className="placeholder placeholder-wave" style={{width: "20ch"}}></div>
+    <div className={`${classes.creation_date} placeholder placeholder-wave`} style={{width: "15ch"}}></div>
+    <div className="placeholder placeholder-wave" style={{width: "10ch"}}></div>
+    <div className="placeholder placeholder-wave" style={{width: "10ch"}}></div>
+  </div>;
+
+  const QueryStatsElement = <div className={classes.item_stats}>
+    <div className="placeholder placeholder-wave" style={{width: "10ch"}}></div>
+    <div className="placeholder placeholder-wave" style={{width: "10ch"}}></div>
+    <div className="placeholder placeholder-wave" style={{width: "10ch"}}></div>
+    <div className="placeholder placeholder-wave" style={{width: "10ch"}}></div>
+  </div>
+
+  const PicsPreviewElement = <div className={classes.item_preview}>
+    <img src={""} className="placeholder placeholder-wave"/>
+    <img src={""} className="placeholder placeholder-wave"/>
+    <img src={""} className="placeholder placeholder-wave" />
+    <img src={""} className="placeholder placeholder-wave" />
+  </div>
+  return (
+    <li className={classes.history_item}>
+      {SearchQueryElement}
+      {PicsPreviewElement}
+      {QueryStatsElement}
+    </li>
+  )
+
+}
+
 const HistoryItem = ({ item }) => {
 
   const SearchQueryElement = <div className={classes.item_query}>
@@ -58,10 +90,10 @@ const HistoryItem = ({ item }) => {
   }, [largestResult]);
 
   const PicsPreviewElement = <div className={classes.item_preview}>
-    <img src={shuffledResult[0].preview_url} />
-    <img src={shuffledResult[1].preview_url} />
-    <img src={shuffledResult[2].preview_url} />
-    <img src={shuffledResult[3].preview_url} />
+    {shuffledResult[0] && <img src={shuffledResult[0].preview_url} />}
+    {shuffledResult[1] && <img src={shuffledResult[1].preview_url} />}
+    {shuffledResult[2] && <img src={shuffledResult[2].preview_url} />}
+    {shuffledResult[3] && <img src={shuffledResult[3].preview_url} />}
   </div>
 
   console.log("item is ", item);
@@ -128,6 +160,7 @@ const SearchHistory = () => {
       {isLoading && <p>We are loading data...</p>}
       {error && <p>We have an error, Scotty!</p>}
       <ul className={classes.history_list}>
+        {isLoading && Array.from({length: HISTORY_PAGE_SIZE}).map((_, idx) => <HistoryItemPlaceholder key={idx}/>)}
         {lastQueries.map(val => (
           <HistoryItem item={val} key={val._id} />
         ))}

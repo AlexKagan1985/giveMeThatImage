@@ -1,11 +1,13 @@
 import React, { useState, useCallback } from "react";
 import classes from "./Home.module.scss";
-import Commonkeywords from "./Commonkeywords";
-import { useNavigate } from "react-router";
+// import Commonkeywords from "./Commonkeywords";
+import { useNavigate, useParams } from "react-router";
+import SearchPage from "./SearchPage";
 
 function Home() {
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
+  const {query, provider, page} = useParams();
 
   const handleSubmit = useCallback(
     (e) => {
@@ -16,13 +18,8 @@ function Home() {
   );
 
   return (
-    <div>
-      <form
-        onSubmit={handleSubmit}
-        action=""
-        method="get"
-        className={classes.form}
-      >
+    <div className={`${classes.form_container} ${!query && classes.form_centered} `}>
+      <form onSubmit={handleSubmit} action="" method="get" className={`${classes.form}`}>
         <input
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
@@ -32,9 +29,10 @@ function Home() {
         />
         <input type="submit" value="Search" className={classes.searchButton} />
       </form>
-      <div className={classes.keywords}>
+      {/* <div className={classes.keywords} >
         <Commonkeywords />
-      </div>
+      </div> */}
+      {query && <SearchPage query={query} provider={provider} page={page} />}
     </div>
   );
 }
