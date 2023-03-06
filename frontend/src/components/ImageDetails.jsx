@@ -1,22 +1,36 @@
-import React from "react";
+import { useAtomValue } from "jotai";
 import Card from "react-bootstrap/Card";
+import { NavLink } from "react-router-dom";
+import { selectedImageAtom } from "../atoms/imageDetails";
+import { useQuery } from "react-query";
 // import { useParams } from "react-router-dom";
 import classes from "./ImageDetails.module.css";
+import axios from "axios";
 
 function ImageDetails() {
-  // const { id } = useParams();
-  // const image = testData.find((image) => image.id === id);
-  const image = {
-    id: 1,
-    title: "test",
-    author_name: "test",
-    img_url:
-      "https://images.unsplash.com/photo-1626120000000-1c1e1e1e1e1e?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
-  };
+  const image = useAtomValue(selectedImageAtom);
+
+  console.log("see image: ", image);
+
+  const hash_id = image.api_data.hash_id;
+  
+  // special case for artstation image: need to do additional request to get image URL
+  const {data: imageUrl, isSuccess, isError} = useQuery(["artstation-image", image.id], async () => {
+    if (hash_id) {
+      const result = await axios.get(`http://localhost:3001/artstation_image/${hash_id}`);
+      return result.data.cover_url;
+    } else {
+      return image.img_url;
+    }
+  });
+
+  console.log(imageUrl);
+
   return (
     <>
+      {isSuccess ? (
       <Card className={classes.card}>
-        <Card.Img variant="top" src={image.img_url} />
+        <Card.Img variant="top" src={imageUrl} />
         <Card.Body>
           <Card.Text className={classes.title}>Title: {image.title}</Card.Text>
           <Card.Text className={classes.author}>
@@ -24,6 +38,13 @@ function ImageDetails() {
           </Card.Text>
         </Card.Body>
       </Card>
+      ) : (
+      <div>
+        {isError && <p>Error fetching data from the artstation server or backend.</p>}
+        <p>No image was selected. Something wrong must have happened. </p>
+        <NavLink to="/">Go back</NavLink>
+      </div>
+      )}
     </>
   );
 }

@@ -1,9 +1,11 @@
 /* eslint-disable no-unused-vars */
-import { useAtomValue } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 import React, { useMemo, useState, useEffect, useRef, useCallback } from "react";
 import { Pagination } from "react-bootstrap";
 import Card from "react-bootstrap/Card";
 import ListGroup from "react-bootstrap/ListGroup";
+import { useNavigate } from "react-router-dom";
+import { selectedImageAtom } from "../atoms/imageDetails";
 // eslint-disable-next-line no-unused-vars
 import { PaginatedSearchResult } from "../atoms/search";
 import classes from "./SearchResultCards.module.css";
@@ -81,6 +83,8 @@ const Paginated = ({ pageCount, setCurrentPage, currentPage, paginator }) => {
 
 function SearchResultCard({ data, provider }) {
   const thisCard = useRef();
+  const navigate = useNavigate();
+  const [, setCurrentImage] = useAtom(selectedImageAtom);
 
   useEffect(() => {
     const centerX = window.innerWidth / 2;
@@ -112,12 +116,20 @@ function SearchResultCard({ data, provider }) {
     };
   }, []);
 
+  const handleSeeImage = (e) => {
+    e.preventDefault();
+    setCurrentImage(data);
+    navigate("/image");
+  }
+
   return (
     <Card className={classes.card} ref={thisCard}>
-      <Card.Img variant="top" src={data.preview_url} className={classes.img} />
-      <Card.Body className={classes.card_body}>
-        <Card.Title>{data.title}</Card.Title>
-      </Card.Body>
+      <a href="#" onClick={handleSeeImage}>
+        <Card.Img variant="top" src={data.preview_url} className={classes.img} />
+        <Card.Body className={classes.card_body}>
+          <Card.Title>{data.title}</Card.Title>
+        </Card.Body>
+      </a>
       <ListGroup className="list-group-flush">
         <ListGroup.Item>{`provider: ${provider}`}</ListGroup.Item>
       </ListGroup>
@@ -134,18 +146,18 @@ function SearchResultCard({ data, provider }) {
  *
  * @param {CardResultProps} param
  */
-function SearchResultCards({ currentData }) {
-  const [currentPage, setCurrentPage] = useState(1);
+function SearchResultCards({ currentData, pageNumber, setCurrentPage }) {
+  // const [currentPage, setCurrentPage] = useState(pageNumber);
 
   // If currentData changes, reset the currentPage
-  useEffect(() => {
-    console.log("resetting current page");
-    setCurrentPage(1);
-  }, [currentData]);
+  // useEffect(() => {
+  //   console.log("resetting current page");
+  //   setCurrentPage(1);
+  // }, [currentData]);
 
   const pageAtom = useMemo(() => {
-    return currentData.pageAtom(currentPage);
-  }, [currentPage, currentData]);
+    return currentData.pageAtom(pageNumber);
+  }, [pageNumber, currentData]);
 
   const pageData = useAtomValue(pageAtom);
 
@@ -172,7 +184,7 @@ function SearchResultCards({ currentData }) {
           pageCount={currentData.pageCount}
           paginator={currentData.paginator}
           setCurrentPage={setCurrentPage}
-          currentPage={currentPage}
+          currentPage={pageNumber}
         />
       </Pagination>
     </>

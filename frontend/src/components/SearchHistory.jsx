@@ -8,7 +8,7 @@ import axios from "axios";
 import classes from "./SearchHistory.module.scss";
 import { ButtonGroup, Button } from "react-bootstrap";
 
-const HISTORY_PAGE_SIZE = 7;
+const HISTORY_PAGE_SIZE = 7; // see also the constant in backend/controllers/search.js
 
 /**
  * Shuffles array in place. ES6 version

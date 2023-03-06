@@ -52,11 +52,11 @@ function Navigationbar() {
           <div className={classes.user_name}>{theUser && theUser.login}</div>
           <div>{theUser && theUser.description}</div>
         </div>
-        <Avatar
+        {theUser && <Avatar
           size="50"
-          facebook-id="invalidfacebookusername"
-          src="http://www.gravatar.com/avatar/a16a38cdfe8b2cbd38e8a56ab93238d3"
-        />
+          round={true}
+          name={theUser.login}
+        />}
       </Navbar>
     </>
   );

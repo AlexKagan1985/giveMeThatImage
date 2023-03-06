@@ -1,5 +1,4 @@
-import { useParams } from "react-router-dom";
-import { useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import { searchHistoryFamily } from "../atoms/search";
 import classes from "./SearchPage.module.scss";
 import SearchResultCards from "./SearchResultCards";
@@ -7,13 +6,24 @@ import { Button } from "react-bootstrap";
 import { useAtomValue } from "jotai";
 
 function SearchHistoryDetailedPage() {
-  const { queryId } = useParams();
-  const [currentProviderIdx, setCurrentProviderIdx] = useState(0); //index in the providers array, from 0 to 3
+  const { queryId, provider, page } = useParams();
+  const pageNumber = page === undefined ? 1 : parseInt(page);
+  const currentProviderIdx = provider !== undefined ? parseInt(provider) : 0;
+  // const [currentProviderIdx, setCurrentProviderIdx] = useState(0); //index in the providers array, from 0 to 3
   const providers = ["Pixabay", "ArtStation", "DeviantArt", "Unsplash"];
   const searchResultsAtom = searchHistoryFamily(queryId);
   const searchResults = useAtomValue(searchResultsAtom);
+  const navigate = useNavigate();
 
   console.log("current results are ", searchResults);
+
+  const setCurrentProviderIdx = (pIdx) => {
+    navigate(`/user-history/${queryId}/${pIdx}/1`);
+  }
+
+  const handleChangePageNumber = (newPageNumber) => {
+    navigate(`/user-history/${queryId}/${currentProviderIdx}/${newPageNumber}`);
+  }
 
   return (
     <div>
@@ -31,7 +41,14 @@ function SearchHistoryDetailedPage() {
           </Button>
         ))}
       </div>
-      {searchResults.state === "hasData" ? <SearchResultCards currentData={searchResults.data[currentProviderIdx]} /> : "Loading..."}
+      {
+        searchResults.state === "hasData" ? 
+        <SearchResultCards 
+          currentData={searchResults.data[currentProviderIdx]} 
+          pageNumber={pageNumber} 
+          setCurrentPage={handleChangePageNumber}
+        /> : "Loading..."
+      }
     </div>
   )
 }

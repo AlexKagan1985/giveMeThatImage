@@ -9,7 +9,7 @@ const USERROR = 3; // error in Unsplash request
 const PBERROR = 4; // error in Pixabay request
 
 const PAGE_LIMIT = 20;
-
+const HISTORY_PAGE_SIZE = 7; // see also the constant in frontend/src/components/SearchHistory.jsx
 class SearchError extends Error {
   constructor(ty, msg) {
     super(`${ty}: ${msg}`);
@@ -99,10 +99,10 @@ async function retrieveDAResults(query, pageNumber) {
 
   // filter out literary content 
 
-  const resultsFilteredArray = resultsArray.filter(val => val.category !== "Literature" && !val.is_mature) ;
+  const resultsFilteredArray = resultsArray.filter(val => val.category !== "Literature" && !val.is_mature && val.content?.src) ;
 
   const searchResultArray = resultsFilteredArray.map((val) => ({
-    img_url: val.url,
+    img_url: val.content.src,
     title: val.title,
     author_id: val.author.userid,
     author_name: val.author.username,
@@ -393,7 +393,7 @@ export async function getPreviousQueries(req, res) {
         'creation_date': -1,
       }
     }, {
-      '$limit': 7,
+      '$limit': HISTORY_PAGE_SIZE,
     }, {
       '$lookup': {
         'from': 'searchresults',
