@@ -87,6 +87,7 @@ function SearchResultCard({ data, provider, placeholder }) {
   const thisCard = useRef();
   const navigate = useNavigate();
   const [, setCurrentImage] = useAtom(selectedImageAtom);
+  const [imageLoaded, setImageLoaded] = useState(false);
 
   useEffect(() => {
     const centerX = window.innerWidth / 2;
@@ -133,8 +134,8 @@ function SearchResultCard({ data, provider, placeholder }) {
       <a href="#" onClick={handleSeeImage}>
         { !placeholder && <>
         <div className={classes.image_block}>
-          <Card.Img variant="top" className={`${classes.img} placeholder placeholder-wave ${classes.placeholder_under}`} />
-          <Card.Img variant="top" src={data.preview_url} className={classes.img} />
+          { !imageLoaded && <Card.Img variant="top" className={`${classes.img} placeholder placeholder-wave ${classes.placeholder_under}`} />}
+          <Card.Img variant="top" src={data.preview_url} className={classes.img} onLoad={() => setImageLoaded(true)} />
         </div>
         <Card.Body className={classes.card_body}>
           <Card.Title>{data.title}</Card.Title>

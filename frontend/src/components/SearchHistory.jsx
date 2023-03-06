@@ -7,6 +7,7 @@ import { useQuery } from "react-query";
 import axios from "axios";
 import classes from "./SearchHistory.module.scss";
 import { ButtonGroup, Button } from "react-bootstrap";
+import PlaceholderImage from "./PlaceholderImage.jsx";
 
 const HISTORY_PAGE_SIZE = 7; // see also the constant in backend/controllers/search.js
 
@@ -25,18 +26,18 @@ function shuffle(a) {
 
 const HistoryItemPlaceholder = () => {
 
-  const SearchQueryElement = <div className={`${classes.item_query}`}>
-    <div className="placeholder placeholder-wave" style={{width: "20ch"}}></div>
+  const SearchQueryElement = <div className={`${classes.item_query}`} style={{gap: "2px"}}>
+    <div className="placeholder placeholder-wave" style={{width: "10ch"}}></div>
     <div className={`${classes.creation_date} placeholder placeholder-wave`} style={{width: "15ch"}}></div>
     <div className="placeholder placeholder-wave" style={{width: "10ch"}}></div>
     <div className="placeholder placeholder-wave" style={{width: "10ch"}}></div>
   </div>;
 
-  const QueryStatsElement = <div className={classes.item_stats}>
-    <div className="placeholder placeholder-wave" style={{width: "10ch"}}></div>
-    <div className="placeholder placeholder-wave" style={{width: "10ch"}}></div>
-    <div className="placeholder placeholder-wave" style={{width: "10ch"}}></div>
-    <div className="placeholder placeholder-wave" style={{width: "10ch"}}></div>
+  const QueryStatsElement = <div className={`${classes.item_stats} d-flex flex-column`} style={{gap: "2px"}}>
+    <div className="placeholder placeholder-wave" style={{width: "20ch"}}></div>
+    <div className="placeholder placeholder-wave" style={{width: "20ch"}}></div>
+    <div className="placeholder placeholder-wave" style={{width: "20ch"}}></div>
+    <div className="placeholder placeholder-wave" style={{width: "20ch"}}></div>
   </div>
 
   const PicsPreviewElement = <div className={classes.item_preview}>
@@ -56,6 +57,7 @@ const HistoryItemPlaceholder = () => {
 }
 
 const HistoryItem = ({ item }) => {
+  const[imagesLoaded, setImagesLoaded] = useState([false, false, false, false]);
 
   const SearchQueryElement = <div className={classes.item_query}>
     <div>{item.query_string}</div>
@@ -90,10 +92,10 @@ const HistoryItem = ({ item }) => {
   }, [largestResult]);
 
   const PicsPreviewElement = <div className={classes.item_preview}>
-    {shuffledResult[0] && <img src={shuffledResult[0].preview_url} />}
-    {shuffledResult[1] && <img src={shuffledResult[1].preview_url} />}
-    {shuffledResult[2] && <img src={shuffledResult[2].preview_url} />}
-    {shuffledResult[3] && <img src={shuffledResult[3].preview_url} />}
+    {shuffledResult[0] && <PlaceholderImage src={shuffledResult[0].preview_url} />}
+    {shuffledResult[1] && <PlaceholderImage src={shuffledResult[1].preview_url} />}
+    {shuffledResult[2] && <PlaceholderImage src={shuffledResult[2].preview_url} />}
+    {shuffledResult[3] && <PlaceholderImage src={shuffledResult[3].preview_url} />}
   </div>
 
   console.log("item is ", item);
@@ -157,7 +159,6 @@ const SearchHistory = () => {
     <div className={classes.container}>
       User search history goes here!
       {userState && <p> Your username is: {userState.login}</p>}
-      {isLoading && <p>We are loading data...</p>}
       {error && <p>We have an error, Scotty!</p>}
       <ul className={classes.history_list}>
         {isLoading && Array.from({length: HISTORY_PAGE_SIZE}).map((_, idx) => <HistoryItemPlaceholder key={idx}/>)}
