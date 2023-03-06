@@ -142,7 +142,7 @@ function createPageProvider(provider, query, queryId, maxPages) {
   }, new PaginationSolution(1, maxPages, (pageNumber) => {
       return pageNumber === 1 ? null : pageNumber - 1;
     }, (pageNumber) => {
-      return pageNumber === maxPages ? null : pageNumber + 1;
+      return pageNumber >= maxPages ? null : pageNumber + 1;
     })
   ];
 }
