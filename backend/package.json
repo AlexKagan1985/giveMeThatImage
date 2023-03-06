@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "test": "jest --setupFiles dotenv/config",
-    "start": "node index.js"
+    "start": "node index.js",
+    "ssl": "node index_ssl.js"
   },
   "author": "",
   "license": "ISC",
