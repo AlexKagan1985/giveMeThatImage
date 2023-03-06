@@ -6,9 +6,10 @@ import Profile from "./components/Profile";
 import ImageDetails from "./components/ImageDetails";
 import RegistrationPage from "./components/RegistrationPage";
 import LoginPage from "./components/LoginPage";
-import UserSearchHistory from "./components/UserSearchHistory";
+import SearchHistory from "./components/SearchHistory";
 import { QueryClient, QueryClientProvider } from "react-query";
 import Navigationbar from "./components/Navigationbar";
+import SearchHistoryDetailedPage from "./components/SearchHistoryDetailedPage";
 
 function MainLayout () {
   return (
@@ -35,6 +36,10 @@ const router = createBrowserRouter([
       },
       {
         path: "/search/:query",
+        element: <SearchPage />
+      },
+      {
+        path: "/search/:query/:provider/:page",
         element: <SearchPage />,
       },
       {
@@ -42,7 +47,7 @@ const router = createBrowserRouter([
         element: <Profile />,
       },
       {
-        path: "/image/:id",
+        path: "/image",
         element: <ImageDetails />,
       },
       {
@@ -55,8 +60,16 @@ const router = createBrowserRouter([
       },
       {
         path: "/user-history",
-        element: <UserSearchHistory />
-      }
+        element: <SearchHistory />
+      },
+      {
+        path: "/user-history/:queryId",
+        element: <SearchHistoryDetailedPage />
+      },
+      {
+        path: "/user-history/:queryId/:provider/:page",
+        element: <SearchHistoryDetailedPage />
+      },
     ]
   },
 ]);

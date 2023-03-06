@@ -1,11 +1,14 @@
 /* eslint-disable no-unused-vars */
 import { useAtomValue } from "jotai"
-import { useLocation, useNavigate } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { loggedInUser, loggedInUserToken } from "../atoms/auth.js"
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "react-query";
 import axios from "axios";
-import classes from "./UserSearchHistory.module.scss";
+import classes from "./SearchHistory.module.scss";
+import { ButtonGroup, Button } from "react-bootstrap";
+
+const HISTORY_PAGE_SIZE = 7; // see also the constant in backend/controllers/search.js
 
 /**
  * Shuffles array in place. ES6 version
@@ -25,6 +28,8 @@ const HistoryItem = ({ item }) => {
   const SearchQueryElement = <div className={classes.item_query}>
     <div>{item.query_string}</div>
     <div className={classes.creation_date}>{item.creation_date}</div>
+    <NavLink to={`/user-history/${encodeURIComponent(item._id)}`}>Historical results</NavLink>
+    <NavLink to={`/search/${encodeURIComponent(item.query_string)}`} >Search again</NavLink>
   </div>;
 
   const asPages = item.result_preview.pages?.find(p => p.provider === "artstation");
@@ -69,13 +74,18 @@ const HistoryItem = ({ item }) => {
   )
 }
 
-const UserSearchHistory = () => {
+const SearchHistory = () => {
   const userToken = useAtomValue(loggedInUserToken);
   const userState = useAtomValue(loggedInUser);
+  const [afterItem, setAfterItem] = useState(null);
+  const [afterItemsQueue, setAfterItemsQueue] = useState([]);
   const navigate = useNavigate();
   const location = useLocation();
-  const { data: rawData, error, isLoading } = useQuery(['userHistory', userToken],
+  const { data: rawData, error, isLoading } = useQuery(['userHistory', userToken, afterItem],
     () => axios.get("http://localhost:3001/previous_queries", {
+      params: afterItem ? {
+        after: afterItem
+      } : {},
       headers: {
         Authorization: `BEARER ${userToken}`
       }
@@ -99,6 +109,18 @@ const UserSearchHistory = () => {
     }
   }, [userToken])
 
+  const handlePreviousPage = () => {
+    const newAfter = afterItemsQueue.at(-1);
+    setAfterItem(newAfter);
+    setAfterItemsQueue(afterItemsQueue.filter((_val, idx) => idx !== afterItemsQueue.length - 1));
+  }
+
+  const handleNextPage = () => {
+    const after = lastQueries.at(-1).creation_date;
+    setAfterItem(after);
+    setAfterItemsQueue([...afterItemsQueue, afterItem]);
+  }
+
   return (
     <div className={classes.container}>
       User search history goes here!
@@ -110,8 +132,12 @@ const UserSearchHistory = () => {
           <HistoryItem item={val} key={val._id} />
         ))}
       </ul>
+      <ButtonGroup className="justify-content-center d-flex">
+        {afterItemsQueue.length > 0 && <Button onClick={handlePreviousPage} className="flex-grow-0">&lt; previous</Button>}
+        {lastQueries.length === HISTORY_PAGE_SIZE && <Button onClick={handleNextPage} className="flex-grow-0">next &gt;</Button>}
+      </ButtonGroup>
     </div>
   )
 }
 
-export default UserSearchHistory
+export default SearchHistory

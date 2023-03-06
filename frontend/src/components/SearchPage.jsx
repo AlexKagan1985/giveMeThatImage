@@ -1,16 +1,19 @@
 import { useAtomValue } from "jotai";
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import Button from "react-bootstrap/Button";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { searchResultsFamily } from "../atoms/search";
 import SearchResultCards from "./SearchResultCards";
 import classes from "./SearchPage.module.scss";
 
 function SearchPage() {
-  const { query } = useParams();
-  const [currentProviderIdx, setCurrentProviderIdx] = useState(0); //index in the providers array, from 0 to 3
+  const { query, provider, page } = useParams();
+  const pageNumber = page === undefined ? 1 : parseInt(page);
+  const currentProviderIdx = provider !== undefined ? parseInt(provider) : 0;
+  //const [currentProviderIdx, setCurrentProviderIdx] = useState(provider !== undefined ? parseInt(provider) : 0); //index in the providers array, from 0 to 3
   const searchResultsAtom = searchResultsFamily(query);
   const searchResults = useAtomValue(searchResultsAtom);
+  const navigate = useNavigate();
   const providers = ["Pixabay", "ArtStation", "DeviantArt", "Unsplash"];
 
   console.log("search result atom content: ", searchResults);
@@ -23,6 +26,14 @@ function SearchPage() {
       }
     };
   });
+
+  const setCurrentProviderIdx = (pIdx) => {
+    navigate(`/search/${encodeURIComponent(query)}/${pIdx}/1`);
+  }
+
+  const handleChangePageNumber = (newPageNumber) => {
+    navigate(`/search/${encodeURIComponent(query)}/${currentProviderIdx}/${newPageNumber}`);
+  }
 
   return (
     <div>
@@ -39,13 +50,12 @@ function SearchPage() {
           </Button>
         ))}
       </div>
-      {searchResults.state === "hasData" ? (
-        <SearchResultCards
-          currentData={searchResults.data[currentProviderIdx]}
-        />
-      ) : (
-        "Loading..."
-      )}
+
+      {searchResults.state === "hasData" ? <SearchResultCards 
+        currentData={searchResults.data[currentProviderIdx]} 
+        pageNumber={pageNumber} 
+        setCurrentPage={handleChangePageNumber}/> : "Loading..."}
+
     </div>
   );
 }
