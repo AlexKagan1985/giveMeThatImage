@@ -8,6 +8,7 @@ import { errorHandler } from "./middlewares/error.js";
 import { userRouter } from "./routes/user.js";
 import axios from "axios";
 import https from "https";
+import fs from "fs";
 const PORT = process.env.PORT || 3001;
 
 const app = express();
