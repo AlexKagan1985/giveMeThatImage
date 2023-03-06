@@ -9,6 +9,16 @@
     margin: 0.5vw;  
 }
 
+.image_block{
+    position: relative;
+    overflow: hidden;
+}
+
+.placeholder_under {
+    position: absolute;
+    z-index: -1;
+}
+
 .card {
     text-align: center;  
     --rotateX: 5deg;
@@ -22,7 +32,7 @@
 .cards{
     display: grid;
     /* grid magic line */
-    grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
     gap: 1.5rem;
     margin: 1rem;
 }

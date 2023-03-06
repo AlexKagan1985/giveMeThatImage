@@ -54,7 +54,7 @@ function SearchPage({query, provider, page}) {
       {searchResults.state === "hasData" ? <SearchResultCards 
         currentData={searchResults.data[currentProviderIdx]} 
         pageNumber={pageNumber} 
-        setCurrentPage={handleChangePageNumber}/> : "Loading..."}
+        setCurrentPage={handleChangePageNumber}/> : <SearchResultCards placeholder />}
 
     </div>
   );
