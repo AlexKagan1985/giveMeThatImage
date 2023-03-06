@@ -1,0 +1,22 @@
+.providers {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+  max-width: 70rem;
+  margin-inline: auto;
+}
+
+.settings {
+  background-color: rgb(248, 249, 250);
+  max-width: 70rem;
+  margin-inline: auto;
+}
+
+.button {
+  margin: 1rem;
+}
+
+.link {
+  text-decoration: none;
+  color: black;
+}/*# sourceMappingURL=SearchPage.module.css.map */

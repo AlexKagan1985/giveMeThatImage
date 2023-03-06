@@ -5,10 +5,11 @@
   background: #f2f2f2;
   flex-grow: 1;
   height: calc(var(--padding-size) * 2);
-  border-radius: var(--padding-size);
+  border-radius: 1vw;
   margin-right: 1vw;
   border-color: rgb(53, 53, 55);
   padding-inline: var(--padding-size);
+  border-width: 1.5px;
 }
 
 .form{
@@ -32,8 +33,11 @@
 }
 
 .searchButton{
-  border-radius: 5vw;
+  border-radius: 1vw;
   border-color: rgb(53, 53, 55);
+  border-width: 1.5px;
+  padding-inline-start: 1vw;
+  padding-inline-end: 1vw;
 }
 
 .keywords {
