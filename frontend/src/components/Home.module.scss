@@ -1,12 +1,12 @@
-
+@use "../scss/commons.scss";
 
 .searchBar {
   --padding-size: calc(var(--searchbar-height, 2.6rem) * 0.5);
   background: #f2f2f2;
   flex-grow: 1;
   height: calc(var(--padding-size) * 2);
-  border-radius: 1vw;
-  margin-right: 1vw;
+  border-radius: var(--padding-size);
+  margin-right: 1rem;
   border-color: rgb(53, 53, 55);
   padding-inline: var(--padding-size);
   border-width: 1.5px;
@@ -20,16 +20,15 @@
 }
 
 .form_container {
-  --navbar-margin: 80px;
   --searchbar-height: 2.6rem;
   transition-duration: 0.25s;
   transition-property: transform;
   transition-timing-function: ease;
-  padding-top: var(--navbar-margin);
+  @include commons.avoid-navbar;
 }
 
 .form_centered {
-  transform: translateY(calc(50dvh - var(--searchbar-height) * 0.5 - var(--navbar-margin)));
+  transform: translateY(calc(50dvh - var(--searchbar-height) * 0.5 - var(--navbar-real-height)));
 }
 
 .searchButton{

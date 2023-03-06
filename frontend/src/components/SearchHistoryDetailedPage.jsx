@@ -35,8 +35,6 @@ function SearchHistoryDetailedPage() {
 
   return (
     <div>
-      <p className={classes.settings}>We have query: {queryId}</p>
-      <div className={classes.settings}>Settings</div>
       <div className={classes.providers}>
         {realProviders.map((provider, idx) => (
           <Button

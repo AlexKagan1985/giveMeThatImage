@@ -8,6 +8,5 @@ $form-width: $content-width;
 }
 
 @mixin avoid-navbar {
-  --navbar-margin: 80px;
-  padding-top: var(--navbar-margin);
+    padding-top: 1.5rem;
 }

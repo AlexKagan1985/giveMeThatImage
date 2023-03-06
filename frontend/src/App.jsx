@@ -10,17 +10,28 @@ import SearchHistory from "./components/SearchHistory";
 import { QueryClient, QueryClientProvider } from "react-query";
 import Navigationbar from "./components/Navigationbar";
 import SearchHistoryDetailedPage from "./components/SearchHistoryDetailedPage";
+import { useRef, useEffect } from "react";
 
 function MainLayout () {
+  const navBarRef = useRef();
+  const rootRef = useRef();
+
+  useEffect(() => {
+    const navHeight = navBarRef.current;
+
+    rootRef.current.style.setProperty("--navbar-real-height", `${navHeight.offsetHeight}px`);
+  }, [])
+
   return (
-    <>
+    <div className={classes["main-container"]} ref={rootRef}>
+      <Navigationbar isFixed={true}  ref={navBarRef}/>
       <Navigationbar />
       <main className={classes["main-element"]}>
         <QueryClientProvider client={queryClient} >
           <Outlet />
         </QueryClientProvider>
       </main>
-    </>
+    </div>
   )
 }
 
