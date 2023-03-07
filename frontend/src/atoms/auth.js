@@ -1,5 +1,5 @@
 import { atom, getDefaultStore } from "jotai";
-import axios from "axios";
+import axios from "../axios";
 
 export const loggedInUser = atom(null);
 export const loggedInUserToken = atom((get) => {
@@ -13,7 +13,7 @@ async function recoverUser() {
     const store = getDefaultStore();
 
     try {
-      const result = await axios.get("http://localhost:3001/user/info", {
+      const result = await axios.get("/user/info", {
         headers: {
           Authorization: `BEARER ${userToken}`
         }

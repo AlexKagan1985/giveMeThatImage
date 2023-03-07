@@ -4,7 +4,7 @@ import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { loggedInUser, loggedInUserToken } from "../atoms/auth.js"
 import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "react-query";
-import axios from "axios";
+import axios from "../axios";
 import classes from "./SearchHistory.module.scss";
 import { ButtonGroup, Button } from "react-bootstrap";
 import PlaceholderImage from "./PlaceholderImage.jsx";
@@ -116,7 +116,7 @@ const SearchHistory = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { data: rawData, error, isLoading } = useQuery(['userHistory', userToken, afterItem],
-    () => axios.get("http://localhost:3001/previous_queries", {
+    () => axios.get("/previous_queries", {
       params: afterItem ? {
         after: afterItem
       } : {},

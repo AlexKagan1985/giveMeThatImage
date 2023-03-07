@@ -5,7 +5,7 @@ import { selectedImageAtom } from "../atoms/imageDetails";
 import { useQuery } from "react-query";
 // import { useParams } from "react-router-dom";
 import classes from "./ImageDetails.module.scss";
-import axios from "axios";
+import axios from "../axios";
 
 function ImageDetails() {
   const image = useAtomValue(selectedImageAtom);
@@ -15,7 +15,7 @@ function ImageDetails() {
   // special case for artstation image: need to do additional request to get image URL
   const {data: imageUrl, isSuccess, isError} = useQuery(["artstation-image", image.id], async () => {
     if (hash_id) {
-      const result = await axios.get(`http://localhost:3001/artstation_image/${hash_id}`);
+      const result = await axios.get(`/artstation_image/${hash_id}`);
       return result.data.cover_url;
     } else {
       return image.img_url;

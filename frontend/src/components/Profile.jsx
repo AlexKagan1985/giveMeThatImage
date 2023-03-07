@@ -9,7 +9,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { Alert, FloatingLabel } from "react-bootstrap";
 import { Formik } from "formik";
 import { object, string } from "yup";
-import axios from "axios";
+import axios from "../axios";
 
 function ChangePasswordForm({ submitCount, values, errors, touched, handleChange, handleBlur, handleSubmit, status, isSubmitting }) {
   const passId = useId();
@@ -160,7 +160,7 @@ function Profile() {
     console.log("submitting with values ... ", formValues);
 
     try {
-      const result = await axios.put("http://localhost:3001/user/info", {
+      const result = await axios.put("/user/info", {
         description: formValues.description,
         email: formValues.email
       }, {
@@ -182,7 +182,7 @@ function Profile() {
     console.log("functions: ", state);
 
     try {
-      const result = await axios.post("http://localhost:3001/user/changePassword", {
+      const result = await axios.post("/user/changePassword", {
         currentPassword: formValues.currentPassword,
         newPassword: formValues.newPassword,
       }, {

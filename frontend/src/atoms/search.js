@@ -1,9 +1,9 @@
 import { atom, getDefaultStore } from "jotai";
 import { atomFamily, loadable } from "jotai/utils";
 import { loggedInUserToken } from "./auth";
-import axios from "axios";
+import axios from "../axios";
 
-const backendUrl = "http://localhost:3001";
+const backendUrl = "";
 
 export class PaginationError extends Error {
   constructor(provider, pageNumber) {

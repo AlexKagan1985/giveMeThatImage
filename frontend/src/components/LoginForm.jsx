@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars, no-unreachable */
-import axios from "axios";
+import axios from "../axios";
 import { useId } from "react"
 import { Alert, Button, FloatingLabel, Form } from "react-bootstrap"
 import { useNavigate } from "react-router-dom";
@@ -69,7 +69,7 @@ const LoginForm = ({ redirect }) => {
 
     //TODO: actually do the registration here
     try {
-      const result = await axios.post("http://localhost:3001/user/login", {
+      const result = await axios.post("/user/login", {
         login,
         password
       });
