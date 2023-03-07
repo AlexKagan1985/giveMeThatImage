@@ -1,22 +1,39 @@
 @use "../scss/commons.scss";
+@use "../bootstrap.scss";
 
-.searchBar {
-  --padding-size: calc(var(--searchbar-height, 2.6rem) * 0.5);
-  background: #f2f2f2;
-  flex-grow: 1;
-  height: calc(var(--padding-size) * 2);
-  border-radius: var(--padding-size);
-  margin-right: 1rem;
-  border-color: rgb(53, 53, 55);
-  padding-inline: var(--padding-size);
-  border-width: 1.5px;
+.search_bar_group {
+  position: relative;
+  .search_bar {
+    background: #f2f2f2;
+    flex-grow: 1;
+    height: calc(var(--padding-size) * 2);
+    border-radius: var(--padding-size);
+    border-color: rgb(53, 53, 55);
+    padding-inline: var(--padding-size);
+    border-width: 1px;
+    @media screen and (max-width: 600px) {
+      border-top-right-radius: var(--padding-size) !important;
+      border-bottom-right-radius: var(--padding-size) !important;
+    }
+  }
+
+  .search_button {
+    border-radius: var(--padding-size);
+    border-color: rgb(53, 53, 55);
+    border-width: 1px;
+    padding-inline: var(--padding-size);
+
+    @media screen and (max-width: 600px) {
+      @include bootstrap.visually-hidden;
+    }
+  }
 }
 
 .form{
 
+  --padding-size: calc(var(--searchbar-height, 2.6rem) * 0.5);
   display: flex;
-  min-width: 80%;
-  margin-inline: 6rem;
+  margin-inline: clamp(1rem, 5vw, 6rem);
 }
 
 .form_container {
@@ -29,14 +46,6 @@
 
 .form_centered {
   transform: translateY(calc(50dvh - var(--searchbar-height) * 0.5 - var(--navbar-real-height)));
-}
-
-.searchButton{
-  border-radius: 1vw;
-  border-color: rgb(53, 53, 55);
-  border-width: 1.5px;
-  padding-inline-start: 1vw;
-  padding-inline-end: 1vw;
 }
 
 .keywords {

@@ -1,0 +1,14 @@
+@use "../scss/commons.scss";
+
+.container {
+    @include commons.content-centered;
+}
+
+.card {
+    margin: 1rem;
+}
+
+.title, .author {
+    font: italic 1.2em "Fira Sans", serif;
+}
+

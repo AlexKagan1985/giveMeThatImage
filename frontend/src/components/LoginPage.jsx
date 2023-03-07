@@ -5,12 +5,14 @@ import classes from "./LoginPage.module.scss";
 const LoginPage = () => {
   const { redirect } = useParams();
   return (
-    <div className={classes.loginpage}>
-      <h2>Login page</h2>
+    <div className={classes.container}>
+      <div className={classes.loginpage}>
+        <h2>Login page</h2>
 
-      <LoginForm redirect={redirect} />
+        <LoginForm redirect={redirect} />
 
-      <p> Do you want to register? <NavLink to={`/register/${encodeURIComponent(redirect)}`}>Click here</NavLink></p>
+        <p> Do you want to register? <NavLink to={`/register/${encodeURIComponent(redirect)}`}>Click here</NavLink></p>
+      </div>
     </div>
   )
 }

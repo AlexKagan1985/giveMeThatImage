@@ -1,6 +1,9 @@
 @use '../scss/commons.scss';
 
-.loginpage {
+.container {
     @include commons.content-centered;
     @include commons.avoid-navbar;
+    .loginpage {
+        margin: 1.5rem;
+    }
 }

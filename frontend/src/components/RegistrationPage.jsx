@@ -5,10 +5,12 @@ import classes from "./RegistrationPage.module.scss";
 const RegistrationPage = () => {
   const { redirect } = useParams();
   return (
-    <div className={classes.registration_page}>
-      <h2>Registration page</h2>
+    <div className={classes.container} >
+      <div className={classes.registration_page}>
+        <h2>Registration page</h2>
 
-      <RegistrationForm redirect={redirect} />
+        <RegistrationForm redirect={redirect} />
+      </div>
     </div>
   )
 }

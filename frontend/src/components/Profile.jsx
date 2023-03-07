@@ -204,32 +204,34 @@ function Profile() {
 
   return (
     user && (
-    <div className={classes.content}>
-      <Formik
-        component={InnerForm}
-        onSubmit={handleSubmit}
-        initialValues={user}
-      />
+    <div className={classes.container}>
+      <div className={classes.content}>
+        <Formik
+          component={InnerForm}
+          onSubmit={handleSubmit}
+          initialValues={user}
+        />
 
-      <p>If you want to change your password, you can do it here: </p>
-      <Formik
-        component={ChangePasswordForm}
-        onSubmit={handleChangePassword}
-        validationSchema={changePassSchema}
-        initialValues={{
-          currentPassword: "",
-          newPassword: "",
-          repeatPassword: "",
-        }}
-        validate={(values) => {
-          if (values.newPassword !== values.repeatPassword) {
-            return {
-              repeatPassword: "values should match"
+        <p>If you want to change your password, you can do it here: </p>
+        <Formik
+          component={ChangePasswordForm}
+          onSubmit={handleChangePassword}
+          validationSchema={changePassSchema}
+          initialValues={{
+            currentPassword: "",
+            newPassword: "",
+            repeatPassword: "",
+          }}
+          validate={(values) => {
+            if (values.newPassword !== values.repeatPassword) {
+              return {
+                repeatPassword: "values should match"
+              }
             }
-          }
-          return {};
-        }}
-      />
+            return {};
+          }}
+        />
+      </div>
     </div>)
   );
 }

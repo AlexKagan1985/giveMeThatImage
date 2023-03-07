@@ -1,20 +1,27 @@
 
 .link {
-    margin-inline: 1.5em;
+  margin-inline: 1.5em;
 }
 
 .user_info {
-    margin-inline: 1rem;
-    
-    .user_name {
-        font-weight: bold;
-        padding-inline-end: 2rem;
-        
-    }
+  margin-inline: 1rem;
+  
+  .user_name {
+    font-weight: bold;
+    padding-inline-end: 2rem;
+  }
+
+  @media screen and (max-width: 600px) {
+    display: none;
+  }
 }
 
 .avatar {
-    margin-right: 1.5rem;
+  margin-right: 1.5rem;
+
+  @media screen and (max-width: 600px) {
+    display: none;
+  }
 }
 
 .activeNavlink {  
@@ -28,17 +35,18 @@
     text-decoration: none;
   }
 }
-  .nonActiveNavlink {
-    text-decoration: none;
-    color: black;
-    opacity: 0.6;    
-    padding: 1.5rem;
-    &:hover {
-      text-decoration: none; 
-      font-weight: bold;    
-      color: black;     
-    }
+
+.nonActiveNavlink {
+  text-decoration: none;
+  color: black;
+  opacity: 0.6;    
+  padding: 1.5rem;
+  &:hover {
+    text-decoration: none; 
+    font-weight: bold;    
+    color: black;     
   }
+}
 
 
 

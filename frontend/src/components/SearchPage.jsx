@@ -6,6 +6,14 @@ import { searchResultsFamily } from "../atoms/search";
 import SearchResultCards from "./SearchResultCards";
 import classes from "./SearchPage.module.scss";
 
+function NothingHere() {
+  return <div className={classes.nothing}>
+    <h2>No images here.</h2>
+    <p>The search for your query resulted in no images.</p>
+    <p>Try to search for something different.</p>
+  </div>;
+}
+
 function SearchPage({query, provider, page}) {
   // const { query, provider, page } = useParams();
   const pageNumber = page === undefined ? 1 : parseInt(page);
@@ -58,10 +66,10 @@ function SearchPage({query, provider, page}) {
         ))}
       </div>
 
-      {searchResults.state === "hasData" ? <SearchResultCards 
+      {searchResults.state === "hasData" ? (searchResults.data.length > 0 ? <SearchResultCards 
         currentData={searchResults.data[currentProviderIdx]} 
         pageNumber={pageNumber} 
-        setCurrentPage={handleChangePageNumber}/> : <SearchResultCards placeholder />}
+        setCurrentPage={handleChangePageNumber}/> : <NothingHere />) : <SearchResultCards placeholder />}
 
     </div>
   );

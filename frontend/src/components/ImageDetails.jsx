@@ -4,13 +4,11 @@ import { NavLink } from "react-router-dom";
 import { selectedImageAtom } from "../atoms/imageDetails";
 import { useQuery } from "react-query";
 // import { useParams } from "react-router-dom";
-import classes from "./ImageDetails.module.css";
+import classes from "./ImageDetails.module.scss";
 import axios from "axios";
 
 function ImageDetails() {
   const image = useAtomValue(selectedImageAtom);
-
-  console.log("see image: ", image);
 
   const hash_id = image.api_data.hash_id;
   
@@ -24,20 +22,22 @@ function ImageDetails() {
     }
   });
 
-  console.log(imageUrl);
+  console.log("current image: ", image);
 
   return (
     <>
       {isSuccess ? (
-      <Card className={classes.card}>
-        <Card.Img variant="top" src={imageUrl} />
-        <Card.Body>
-          <Card.Text className={classes.title}>Title: {image.title}</Card.Text>
-          <Card.Text className={classes.author}>
-            Author: {image.author_name}
-          </Card.Text>
-        </Card.Body>
-      </Card>
+      <div className={classes.container}>
+        <Card className={classes.card}>
+          <Card.Img variant="top" src={imageUrl} />
+          <Card.Body>
+            <Card.Text className={classes.title}>Title: {image.title ?? "untitled"}</Card.Text>
+            <Card.Text className={classes.author}>
+              Author: {image.author_name}
+            </Card.Text>
+          </Card.Body>
+        </Card>
+      </div>
       ) : (
       <div>
         {isError && <p>Error fetching data from the artstation server or backend.</p>}
