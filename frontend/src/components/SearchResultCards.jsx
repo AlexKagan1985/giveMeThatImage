@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { selectedImageAtom } from "../atoms/imageDetails";
 // eslint-disable-next-line no-unused-vars
 import { PaginatedSearchResult } from "../atoms/search";
-import classes from "./SearchResultCards.module.css";
+import classes from "./SearchResultCards.module.scss";
 
 const nullAtom = atom(() => null);
 
@@ -130,31 +130,36 @@ function SearchResultCard({ data, provider, placeholder }) {
   }
 
   return (
-    <Card className={classes.card} ref={thisCard}>
-      <a href="#" onClick={handleSeeImage}>
-        { !placeholder && <>
-        <div className={classes.image_block}>
-          { !imageLoaded && <Card.Img variant="top" className={`${classes.img} placeholder placeholder-wave ${classes.placeholder_under}`} />}
-          <Card.Img variant="top" src={data.preview_url} className={classes.img} onLoad={() => setImageLoaded(true)} />
-        </div>
-        <Card.Body className={classes.card_body}>
-          <Card.Title>{data.title}</Card.Title>
-        </Card.Body></> }
-        {placeholder && <><Card.Img variant="top" className={`${classes.img} placeholder placeholder-wave`} />
-        <Card.Body className={`${classes.card_body} placeholder-wave`}>
-          <Card.Title className="placeholder w-75"></Card.Title>
-        </Card.Body></> }
+    <div className={classes.card} ref={thisCard}>
+      { !placeholder && 
+      <a href="#" onClick={handleSeeImage} >
+      <div className={classes.image_block}>
+        { !imageLoaded && <Card.Img variant="top" className={`${classes.img} placeholder placeholder-wave ${classes.placeholder_under}`} />}
+        <Card.Img variant="top" src={data.preview_url} className={classes.img} onLoad={() => setImageLoaded(true)} />
+      </div>
       </a>
-      { !placeholder && <ListGroup className="list-group-flush">
-        <ListGroup.Item>{`provider: ${provider}`}</ListGroup.Item>
-      </ListGroup> }
-      { placeholder && <ListGroup className="list-group-flash placeholder-wave">
-        <ListGroup.Item className="placeholder w-75"></ListGroup.Item>
-      </ListGroup>}
-      <Card.Body className={classes.card_body}>
-        {!placeholder && <Card.Link href={data.img_url}>Card Link</Card.Link> }
-      </Card.Body>
-    </Card>
+      }
+      { placeholder &&
+      <>
+        <Card.Img variant="top" className={`${classes.img} placeholder placeholder-wave`} />
+      </> 
+      }
+      <div className={classes.card_data} >
+        { !placeholder &&
+        <>
+          <div className={`${classes.card_body} ${classes.hidden_unfocused}`}>
+            <div className={classes.card_title}>{data.title}</div>
+          </div>
+          <div className={`list-group-flush ${classes.hidden_unfocused}`}>
+            <span>{`provider: ${provider}`}</span>
+          </div> 
+        </>
+        }
+        <div className={`${classes.card_body} ${classes.hidden_unfocused}`}>
+          {!placeholder && <a href={data.img_url}>Card Link</a> }
+        </div>
+      </div>
+    </div>
   );
 }
 

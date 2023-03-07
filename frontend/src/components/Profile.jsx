@@ -101,7 +101,7 @@ function InnerForm({ submitCount, values, errors, touched, handleChange, handleB
         <Form.Control.Feedback type="invalid" >{errors.login}</Form.Control.Feedback>
       </FloatingLabel>
 
-      <Form.Group className="position-relative mb-3">
+      {/* <Form.Group className="position-relative mb-3">
         <Form.Label>Upload/change profile picture</Form.Label>
         <Form.Control
           type="file"
@@ -110,9 +110,9 @@ function InnerForm({ submitCount, values, errors, touched, handleChange, handleB
         // isInvalid={!!errors.file}
         />
         <Form.Control.Feedback type="invalid" tooltip>
-          {/* {errors.file} */}
+          {errors.file}
         </Form.Control.Feedback>
-      </Form.Group>
+      </Form.Group> */}
 
       <FloatingLabel controlId={loginid} label="Please provider a short description" className="mb-3">
         <Form.Control
