@@ -19,15 +19,18 @@ function Home() {
   );
 
   return (
-    <div className={`${classes.form_container} ${!query && classes.form_centered} `}>
-      <form onSubmit={handleSubmit} action="" method="get" className={`${classes.form}`}>
-        <SearchInputBar value={searchQuery} setValue={setSearchQuery} />
-      </form>
-      {/* <div className={classes.keywords} >
-        <Commonkeywords />
-      </div> */}
-      {query && <SearchPage query={query} provider={provider} page={page} />}
-    </div>
+    <>
+      <div className={`${classes.form_container} ${!query && classes.form_centered} `}>
+        {!query && <div className={classes.hero_section} >give me that image!</div>}
+        <form onSubmit={handleSubmit} action="" method="get" className={`${classes.form}`}>
+          <SearchInputBar value={searchQuery} setValue={setSearchQuery} />
+        </form>
+        {/* <div className={classes.keywords} >
+          <Commonkeywords />
+        </div> */}
+        {query && <SearchPage query={query} provider={provider} page={page} />}
+      </div>
+    </>
   );
 }
 

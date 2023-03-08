@@ -1,5 +1,15 @@
 @use "../scss/commons.scss";
 @use "../bootstrap.scss";
+@import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
+
+.hero_section {
+  font-family: 'Pacifico', cursive;
+  text-align: center;
+  font-size: 40px;
+  height: 200px;
+  display: grid;
+  place-content: center;
+}
 
 .search_bar_group {
   position: relative;
@@ -48,7 +58,7 @@
 }
 
 .form_centered {
-  transform: translateY(calc(50dvh - var(--searchbar-height) * 0.5 - var(--navbar-real-height)));
+  transform: translateY(calc(50dvh - var(--searchbar-height) * 0.5 - var(--navbar-real-height) - 200px));
 }
 
 .keywords {
