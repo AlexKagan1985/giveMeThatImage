@@ -11,6 +11,8 @@ function Navigationbar({ isFixed }, ref) {
   const theUser = useAtomValue(loggedInUser);
   const currentLocation = useLocation();
 
+  const pathName = currentLocation.pathname;
+
   const handleLogout = (e) => {
     e.preventDefault();
     logOut();
@@ -48,7 +50,7 @@ function Navigationbar({ isFixed }, ref) {
               Profile
             </NavLink>
           )}
-          {!theUser && (
+          {!theUser && !pathName.includes("login") && !pathName.includes("register") && (
             <NavLink
               className={({ isActive }) =>
                 isActive ? classes.activeNavlink : classes.nonActiveNavlink

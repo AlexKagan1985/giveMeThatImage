@@ -194,7 +194,7 @@ function SearchResultCards({ currentData, pageNumber, setCurrentPage, placeholde
     <>
       <div className={classes.cards}>
         {!placeholder && pageData.state === "hasData"
-          ? pageData.data?.map((data) => (
+          ? pageData.data?.filter(data => !data.mature_content).map((data) => (
               <SearchResultCard
                 data={data}
                 provider={currentData.provider}
