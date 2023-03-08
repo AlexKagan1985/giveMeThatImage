@@ -34,6 +34,9 @@
   --padding-size: calc(var(--searchbar-height, 2.6rem) * 0.5);
   display: flex;
   margin-inline: clamp(1rem, 5vw, 6rem);
+  & > * {
+    flex: 1;
+  }
 }
 
 .form_container {
